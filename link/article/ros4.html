@@ -1,0 +1,254 @@
+﻿<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>Keisuke Hagiwara</title>
+        <meta name="twitter:card" content="summary"/>
+        <meta name="twitter:site" content="@_hagisuke"/>
+        <meta property="og:url" content="https://hagisuke.github.io/mypage/" />
+        <meta property="og:title" content="Keisuke Hagiwara" /> 
+        <meta property="og:description" content="Web Page of Keisuke Hagiwara" /> 
+        <meta property="og:image" content="../../images/sns_share.jpg" />
+        <meta property="og:locale" content="ja_JP" />
+
+        <!-- CSS Setting -->
+        <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    </head>
+    <body>
+        <div class="wrapper">
+            <!-- headerはまだ -->
+
+            <!-- 記事 -->
+<center><h1>ROSを始めよう　その４</h1></center>
+<h2>前回の内容</h2>
+<a href="ros3.html">その３</a>
+
+<h2>今回の内容</h2>
+今回はROSのプログラムをシミュレーターも交えて練習していきましょう。<br>
+参考：<a href="http://wiki.ros.org/ja/ROS/Tutorials/CreatingMsgAndSrv">http://wiki.ros.org/ja/ROS/Tutorials/CreatingMsgAndSrv</a>
+
+<h2>シミュレーターgazeboを使ってみる</h2>
+
+<h3>インストールと実行</h3>
+$ sudo apt-get install ros-kinetic-kobuki-gazeboでkobukiというロボットのシミュレーターをインストールします。<br>
+注：ラズパイでgazeboを動かすのはかなりキツイと思います。<br>
+それから、このインストールがうまくいかない場合はその６で紹介するturtlebotの方を使ってみましょう。<br>
+$ roslaunch kobuki_gazebo kobuki_playground.launchと打つと、シミュレーターgazeboが立ち上がります。
+
+<h3>Publisherでロボットを動かす</h3>
+-vel_bumper.py- 
+<pre><code>
+#! /usr/bin/env python
+import rospy
+from geometry_msgs.msg import Twist
+from kobuki_msgs.msg import BumperEvent
+
+
+rospy.init_node('vel_bumper')
+# Parameter(プライベートパラメータ)を取得する
+vel_x = rospy.get_param('~vel_x', 0.5)
+vel_ros = rospy.get_param('~vel_rot', 1.0)
+# Twist型のTopicに書き出すPublisherの作成
+pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=10)
+
+def callback(bumper):
+    # ぶつかるとbumperが反応してバックする
+    back_vel = Twist()
+    back_vel.linear.x = -vel_x
+    rate = rospy.Rate(10.0)
+    # 0.5秒Publishを続ける
+    for i in range(5):
+        pub.publish(vel)
+        rate.sleep()
+
+# BumperEvent型のTopicを購読して、callbackを呼ぶSubscriberの作成
+sub = rospy.Subscriber('/mobile_base/events/bumper', BumperEvent, callback)
+
+while not rospy.is_shutdown():
+    vel = Twist()
+    # キーボード入力を受け付ける
+    direction = raw_input('f: forward, b: backward, l: left, r:right > ')
+    # 入力に応じて並進速度や回転速度を変更する
+    if 'f' in direction:
+        vel.linear.x = vel_x
+    if 'b' in direction:
+        vel.linear.x = -vel_x
+    if 'l' in direction:
+        vel.angular.z = vel_rot
+    if 'r' in direction:
+        vel.angular.z = -vel_rot
+    if 'q' in direction:
+        break
+    print vel
+    rate = rospy.Rate(10.0)
+    # 1秒Publishを続ける
+    for i in range(10):
+        pub.publish(vel)
+        rate.sleep()
+</code></pre>
+
+新しいターミナルでこのプログラムを実行してみましょう。<br>
+いつものように、chmod 755で実行可能にしてrosrunで実行します。<br>
+ちなみに、ロボットの座標系は基本的に前がx軸(赤)、左がy軸(緑)、上がz軸(青)となっています。<br>
+キーボードの入力に合わせてロボットが動き、壁にぶつかるとバックします。<br>
+また、速度についてはParameterでセットすることができます。<br>
+$ rosparam set /vel_bumper/vel_x 1.0のようにコマンドを使うか、実行時に$ rosrun ros_beginner vel_bumper.py _vel_x:=1.0のように引数として与えるかすればよいです。<br>
+また、roslaunchにまとめるのであれば、以下のようにすればよいです。<br>
+<pre><code>
+&lt;roslaunch&gt;
+  &lt;node pkg="ros_beginner" name="vel_bumper" type="vel_bumper.py"&gt;
+    &lt;param name="vel_x" value="1.0"&gt;
+  &lt;/node&gt;
+&lt;/roslaunch&gt;
+</code></pre>
+
+<h3>他のロボットを動かす</h3>
+ROSのメリットとして、同じプログラムで異なるロボットが動かせたりします。<br>
+例えば、以下のようにturtlebotを動かせます。<br>
+引数で、PublishするTopicを変更していますが、これは型が同じだからできることです。<br>
+<pre><code>
+$ rosrun turtlesim turtlesim_node
+$ rosrun ros_beginner vel_bumper.py /mobile_base/commands/velocity:=/turtle1/cmd_vel _vel_x:=1.5
+</code></pre>
+また、以下のようにPR2というロボットを動かせます。<br>
+<pre><vode>
+$ sudo apt-get install ros-kinetic-pr2-simulator
+$ roslaunch pr2_gazebo pr2_empty_world.launch
+$ rosrun ros_beginner vel_bumper.py /mobile_base/commands/velocity:=/base_controller/command
+</code></pre>
+
+<h2>独自のTopicやServiceを作る</h2>
+自分でTopicやServiceを作りたい場合も出てくると思います。その作り方を見ていきましょう。
+
+<h3>コマンドrosmsg</h3>
+まず、ROSでやりとりするデータであるMessageを調べるコマンドを紹介します。型を調べるときに便利なので、覚えておきましょう。<br>
+$ rosmsg show geometry_msgs/TwistのようにやりとりするMessageの型を調べることができます。<br>
+$ rosmsg listで利用可能な全Messageが表示できます。
+
+<h3>独自のTopic</h3>
+ROSのMessageはmsgファイルというもので定義されています。<br>
+例えば、先ほどのgeometry_msgs/Twistについてみてみましょう。<br>
+<pre><code>
+$ roscd geometer_msgs
+$ cat msg/Twist.msg
+</code></pre>
+で定義を見ることができます。<br>
+-Twist.msg- 
+<pre><code>
+# comment
+Vector3 linear
+Vector3 angular
+</code></pre>
+どうやらVector3型のlinear、angularというデータを持つようですね。<br>
+このように、msgファイルを書くことで独自の型のMessageが定義でき、Topic通信ができます。<br>
+<pre><code>
+$ roscd ros_beginner
+$ mkdir msg
+$ cd msg
+</code></pre>
+msgと名付けたディレクトリの中に、自作のmsgファイルは作りましょう。自作のものを使うためには、いろいろ設定が必要なのですが、次の独自のServiceのところでまとめて説明します。
+
+<h3>独自のService</h3>
+独自のServiceを作るには、srvファイルで定義する必要があります。<br>
+<pre><code>
+$ roscd ros_beginner
+$ mkdir srv
+$ cd srv
+</code></pre>
+srvと名付けたディレクトリの中に、以下のようなファイルを作ってみましょう。<br>
+<pre><code>
+SetVelocity.srv 
+float64 linear_velocity
+float64 angular_velocity
+---
+bool success
+</code></pre>
+並進速度と回転速度を入力として成否を出力するように定義しました。<br>
+これを使うためにいろいろな設定をしていきます。<br>
+まず、ros_beginnerの下にあるpackage.xmlを編集します。<br>
+35行目massage_generationと<br>
+39行目message_runtimeをコメントアウトして有効化します。<br>
+次に、CMakeLists.txtの7行目からのfind_package内にmessage_genrationを追加します。<br>
+53行目からのadd_service_filesをコメントアウトし、srvファイルをSetVelocity.srvに変更します。(今回はありませんが、独自のTopicがある場合、add_message_filesをコメントアウトし、msgファイルを自作のものに変更します。)<br>
+67行目からのgenerate_messagesをコメントアウトします。<br>
+これで、$ rossrv show ros_beginner/SetVelocityで定義が参照できるようになるはずです。<br>
+最後に~catkin_wsで$ catkin_makeすれば、使用可能になります。
+
+<h3>独自のServiceを使ってみる</h3>
+先ほど作ったServiceを利用すると、「外部から指定できる速度の範囲があり、それによって速度がセットされたか無視されたかを返す」ようなことができます。<br>
+-velocity_server.py- 
+<pre><code>
+#!/usr/bin/env python
+import rospy
+from geometry_msgs.msg import Twist
+from ros_start.srv import SetVelocity
+from ros_start.srv import SetVelocityResponse
+
+MAX_LINEAR_VELOCITY = 1.0
+MIN_LINEAR_VELOCITY = -1.0
+MAX_ANGULAR_VELOCITY = 2.0
+MIN_ANGULAR_VELOCITY = -2.0
+
+def velocity_handler(req):
+    vel = Twist()
+    is_set_success = True
+    if req.linear_velocity <= MAX_LINEAR_VELOCITY and (
+            req.linear_velocity >= MIN_LINEAR_VELOCITY):
+        vel.linear.x = req.linear_velocity
+    else:
+        is_set_success = False
+    if req.angular_velocity <= MAX_ANGULAR_VELOCITY and (
+            req.angular_velocity >= MIN_ANGULAR_VELOCITY):
+        vel.angular.z = req.angular_velocity
+    else:
+        is_set_success = False
+    print vel
+    if is_set_success:
+        pub.publish(vel)
+    return SetVelocityResponse(success=is_set_success)
+
+if __name__ == '__main__':
+    rospy.init_node('velocity_server')
+    pub = rospy.Publisher('/mobile_base/commands/velocity', Twist, queue_size=10)
+    service_server = rospy.Service('set_velocity', SetVelocity, velocity_handler)
+    rospy.spin()
+</code></pre>
+<br>
+
+-velocity_client.py- 
+<pre><code>
+#!/usr/bin/env python
+import rospy
+from ros_start.srv import SetVelocity
+import sys
+
+if __name__ == '__main__':
+    rospy.init_node('velocity_client')
+    set_velocity = rospy.ServiceProxy('set_velocity', SetVelocity)
+    linear_vel = float(sys.argv[1])
+    angular_vel = float(sys.argv[2])
+    response = set_velocity(linear_vel, angular_vel)
+    if response.success:
+        rospy.loginfo('set [%f, %f] success' % (linear_vel, angular_vel))
+    else:
+        rospy.logerr('set [%f, %f] failed' % (linear_vel, angular_vel))
+</code></pre>
+では実行してみましょう。<br>
+$ roslaunch kobuki_gazebo kobuki_playground.launchを実行<br>
+chmodで実行可能にして、$ rosrun ros_beginner velocity_server.py<br>
+chmodで実行可能にして、$ rosrun ros_beginner velocity_client.py 0.5 0.0<br>
+
+<h2>まとめ</h2>
+今回はROSのプログラムをシミュレーターも交えて練習していきました。<br>
+次回はActionという通信を見ていきたいと思います。<br>
+<a href="ros5.html">その５</a>
+
+
+           
+            <!-- footer -->
+            <div id="footer">
+                <p>&copy;Copyright 2019 Keisuke Hagiwara</p>
+            </div>
+        </div>
+    </body>
+</html>

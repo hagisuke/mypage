@@ -1,0 +1,366 @@
+﻿<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>Keisuke Hagiwara</title>
+        <meta name="twitter:card" content="summary"/>
+        <meta name="twitter:site" content="@_hagisuke"/>
+        <meta property="og:url" content="https://hagisuke.github.io/mypage/" />
+        <meta property="og:title" content="Keisuke Hagiwara" /> 
+        <meta property="og:description" content="Web Page of Keisuke Hagiwara" /> 
+        <meta property="og:image" content="../../images/sns_share.jpg" />
+        <meta property="og:locale" content="ja_JP" />
+
+        <!-- CSS Setting -->
+        <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    </head>
+    <body>
+        <div class="wrapper">
+            <!-- headerはまだ -->
+
+            <!-- 記事 -->
+<center><h1>ROSを始めよう　その３</h1></center>
+<h2>前回の内容</h2>
+<a href="ros2.html">その２</a>
+
+<h2>今回の内容</h2>
+前回のようなコマンド操作ではなく、プログラムを書くことでROSを理解していきましょう。<br>
+参考：<br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/InstallingandConfiguringROSEnvironment">http://wiki.ros.org/ja/ROS/Tutorials/InstallingandConfiguringROSEnvironment</a><br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/NavigatingTheFilesystem">http://wiki.ros.org/ja/ROS/Tutorials/NavigatingTheFilesystem</a><br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/CreatingPackage">http://wiki.ros.org/ja/ROS/Tutorials/CreatingPackage</a><br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/BuildingPackages">http://wiki.ros.org/ja/ROS/Tutorials/BuildingPackages</a><br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/UsingRqtconsoleRoslaunch">http://wiki.ros.org/ja/ROS/Tutorials/UsingRqtconsoleRoslaunch</a><br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/WritingPublisherSubscriber%28c%2B%2B%29">http://wiki.ros.org/ja/ROS/Tutorials/WritingPublisherSubscriber%28c%2B%2B%29</a><br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/WritingPublisherSubscriber%28python%29">http://wiki.ros.org/ja/ROS/Tutorials/WritingPublisherSubscriber%28python%29</a><br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/ExaminingPublisherSubscriber">http://wiki.ros.org/ja/ROS/Tutorials/ExaminingPublisherSubscriber</a><br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/WritingServiceClient%28c%2B%2B%29">http://wiki.ros.org/ja/ROS/Tutorials/WritingServiceClient%28c%2B%2B%29</a><br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/WritingServiceClient%28python%29">http://wiki.ros.org/ja/ROS/Tutorials/WritingServiceClient%28python%29</a><br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/ExaminingServiceClient">http://wiki.ros.org/ja/ROS/Tutorials/ExaminingServiceClient</a>
+
+<h2>準備</h2>
+実際にプログラムを書く前に、いろいろとやらなければいけないことがあります。
+
+<h3>ワークスペースの作成</h3>
+プログラムなどを入れておく場所として、作業用のディレクトリが必要です。これをワークスペースと呼びます。
+<pre><code>
+作業用ディレクトリの作成(名前はなんでもよいが、~/catkin_wsが一般的)
+$ mkdir -p ~/catkin_ws/src
+ディレクトリ移動
+$ cd ~/catkin_ws/src
+catkin用のワークスペースを作るコマンド(この1回だけ行えばよい)
+$ catkin_init_workspace
+ワークスペースに移動
+$ cd ~/catkin_ws
+一度ビルドする(このコマンドはROSのプログラムをビルドするときに使います)
+$ catkin_make
+</code></pre>
+最後のコマンドで表示されるのが、青い文字なら大丈夫です。<br>
+ここででてきたcatkinというのは、ROSのビルドシステムで、ROSのプログラムをビルドするときなどに使います。<br>
+catkin_makeコマンドによってdevelやbuildといったディレクトリも自動で生成されているはずですので、以下のようにsetup.bashを読み込みましょう。<br>
+<pre><code>
+$ source ~/catkin_ws/devel/setup.bash
+</code></pre>
+このコマンドは毎回必要になるので、~/.bashrcの最下行のsource /opt/ros/kinetic/setup.bashを消して、そこに書き込んでしまいましょう。<br>
+ワークスペースがちゃんと作れたかどうかは$ echo $ROS_PACKAGE_PATHで確認できます。
+
+<h3>パッケージの作成</h3>
+ROSではすべてのプログラムはいずれかのパッケージというものに所属することになっています。パッケージとは、固まった機能をもったプログラムの集まりのことです。
+<pre><code>
+ディレクトリ移動
+$ cd ~/catkin_ws/src
+ros_beginnerという名前のパッケージ作成(後に続くのは利用したい外部パッケージ名)
+$ catkin_create_pkg ros_beginner rospy roscpp std_msgs
+ワークスペースに移動
+$ cd ~/catkin_ws
+一度ビルドする
+$ catkin_make
+setup.bashの読み込み
+$ source ~/catkin_ws/devel/setup.bash
+</code></pre>
+catkin_create_pkgコマンドで利用したい外部パッケージが現段階で分からなければ、後で追加することもできるので安心してください。今回はとりあえず基本的なrospy、roscpp、std_msgsを並べました。<br>
+成功していれば、ワークスペース~/catkin_wsで$ roscd ros_beginneerと打つと~/catkin_ws/src/ros_startに移動できます。
+
+<h2>Topic通信をしてみよう(Python)</h2>
+準備もできたので、プログラムを書いていきましょう。
+
+<h3>ディレクトリを用意</h3>
+<pre><code>
+パッケージのディレクトリに移動
+$ roscd ros_beginner
+Pythonのスクリプトを入れるディレクトリを作成
+$ mkdir scripts
+移動
+$ cd scripts
+</code></pre>
+
+<h3>Publisher作成</h3>
+-talker.py-
+<pre><code> 
+#! /usr/bin/env python
+import rospy
+from std_msgs.msg import String
+
+def talker():
+    # talkerという名前のNodeにする
+    rospy.init_node('talker', anonymous=True)
+    # chatterという名前のString型のTopicにPublishするPublisherを作成
+    pub = rospy.Publisher('chatter', String, queue_size=10)
+    # 10Hzで定期的にプログラム実行する仕組み
+    rate = rospy.Rate(10)
+    while not rospy.is_shutdown():
+        # 送るMassage(データ)を用意
+        hello_str = String()
+        hello_str.data = "hello world %s" % rospy.get_time()
+        # 実際にPublishする
+        pub.publish(hello_str)
+        # 10Hzに合わせて必要な時間sleepする
+        rate.sleep()
+
+if __name__ == '__main__':
+    try:
+        talker()
+    except rospy.ROSInterruptException: pass
+</code></pre>
+
+<h3>Subscriber作成</h3>
+-listener.py- 
+<pre><code>
+#! /usr/bin/env python
+import rospy
+from std_msgs.msg import String
+
+def callback(message):
+    # 文字列を表示&TopicとしてPublishする
+    rospy.loginfo("I heard %s", message.data)
+
+def listener():
+    # listenerという名前のNodeにする
+    rospy.init_node('listener', anonymous=True)
+    # chatterという名前のString型のTopicをSubscribeし、Massageに対してcallbackを実行するSubscriberを作成
+    sub = rospy.Subscriber('chatter', String, callback)
+    # 無限ループをしながらMessageの受信を待つ
+    rospy.spin()
+
+if __name__ == '__main__':
+    listener()
+</code></pre>
+
+<h3>プログラムを実行する</h3>
+Pythonで書かれたScriptは$ chmod 755 talker.py listener.pyとすることで、そのまま実行可能な実行ファイルとなります。(なので~/catkin_wsで$ catkin_makeをする必要はないはずですが、うまくいかなければやってください。)<br>
+ターミナルを3つ立ち上げて、$ roscore、$ rosrun ros_beginner talker.py、$ rosrun ros_beginner listener.pyと実行していき、listener.py側に文字列が表示されるか確認してみましょう。<br>
+このように、$ rosrun [パッケージ名] [プログラム名(Node名)]でプログラムを実行できます。<br>
+さらに、rospy.loginfoは文字列をTopicとしてPublishもしているので確認してみましょう。新しいターミナルで$ rqt_consoleと打つと、ログの出力が見えるはずです。<br>
+
+<h2>roslaunchでまとめる</h2>
+今までターミナルをたくさん用意してきましたが、複数のプログラムの実行をまとめられるツールがあります。
+
+<h3>ディレクトリを用意</h3>
+<pre><code>
+パッケージのディレクトリに移動
+$ roscd ros_beginner
+launchファイルを入れるディレクトリを作成
+$ mkdir launch
+移動
+$ cd launch
+</code></pre>
+
+<h3>launchファイル作成</h3>
+-chat.launch-
+<pre><code> 
+&lt;launch&gt;
+  &lt;node pkg="ros_beginner" name="talker" type="talker.py"/&gt;
+  &lt;node pkg="ros_beginner" name="listener" type="listener.py" output="screen"/&gt;
+&lt;/launch&gt;
+</code></pre>
+このように、実行するNodeについて、パッケージ名、Nodeの名前、実行ファイル名(、必要なら出力先なども)を指定します。listenerの方は文字列を出力するので、output="screen"で画面に表示されるようにしました。
+
+<h3>実行</h3>
+$roslaunch ros_beginner chat.launchのように、$ roslaunch [パッケージ名] [ファイル名]で実行できます。ちなみにroslaunchで実行するとroscoreも自動で立ち上げてくれるので今回ターミナルは1つで済みます。便利ですね。
+
+<h2>Topic通信をしてみよう(C++)</h2>
+プログラムはros_beginner/srcの中に書いていきます。<br>
+-talker.cpp-
+<pre><code> 
+#include <ros/ros.h>
+#include <std_msgs/String.h>
+#include <sstream>
+
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "talker");
+  ros::NodeHandle n;
+  ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+  ros::Rate loop_rate(10);
+  int count = 0;
+  while (ros::ok())
+  {
+    std_msgs::String msg;
+    std::stringstream ss;
+    ss << "hello world " << count;
+    msg.data = ss.str();
+
+    ROS_INFO("%s", msg.data.c_str());
+    chatter_pub.publish(msg);
+    // 今回は実際には不要だが、コールバックを受ける必要があるノードの場合はこれを呼ぶ
+    ros::spinOnce();
+
+    loop_rate.sleep();
+    ++count;
+  }
+  return 0;
+}
+</code></pre>
+次にCMakeLists.txtの108行目あたりのadd_executableをadd_executable(talker src/talker.cpp)に変更します。(talkerはNodeの名前)<br>
+115行目あたりのtarget_link_librariesをコメントアウトし、Nodeの名前部分をtalkerに変更します。add_dependencies(talker ros_beginner_generate_messages_cpp)やinclude_directories(include ${catkin_INCLUDE_DIRS})も追加しましょう。<br>
+最後に~/catkin_wsで$ catkin_makeすれば、実行ファイルが作成されます。<br>
+$ ls level/lib/ros_beginner/で確認しましょう。<br>
+$ rosrun ros_beginner talkerで実行できます。<br>
+listener側も同様に行います。<br>
+-listener.cpp- 
+<pre><code>
+#include <ros/ros.h>
+#include <std_msgs/String.h>
+
+void chatterCallback(const std_msgs::String::ConstPtr& msg)
+{
+  ROS_INFO("I heard: [%s]", msg->data.c_str());
+}
+
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "listener");
+  ros::NodeHandle n;
+  ros::Subscriber sub = n.subscribe("chatter", 1000, chatterCallback);
+  ros::spin();
+
+  return 0;
+}
+</code></pre>
+
+<h2>Service通信をしてみよう(Python)</h2>
+
+<h3>Server作成</h3>
+scriptsディレクトリ内にPythonプログラムを書いていきます。<br>
+-service_server.py-
+<pre><code> 
+#! /usr/bin/env python
+
+import rospy
+from std_srvs.srv import Empty
+from std_srvs.srv import EmptyResponse
+
+def handle_service(req):
+    rospy.loginfo('called!')
+    # 返り値を期待される型で返す
+    return EmptyResponse()
+
+def service_server():
+    # service_serverという名前のNodeにする
+    rospy.init_node('service_server')
+    # call_meという名前のEmpty型で、呼ばれたらhandle_serviceを実行するServiceを作成
+    s = rospy.Service('call_me', Empty, handle_service)
+    print "Ready to serve."
+    # 無限ループをしながらServiceが呼ばれるのを待つ
+    rospy.spin()
+
+if __name__ == '__main__':
+    service_server()
+</code></pre>
+
+<h3>Client作成</h3>
+-service_client.py- 
+<pre><code>
+#! /usr/bin/env python
+
+import rospy
+from std_srvs.srv import Empty
+
+def call_service():
+    rospy.loginfo('waiting service')
+    # call_meという名前のServerが立ち上がるのを待つ
+    rospy.wait_for_service('call_me')
+    try:
+        # call_meという名前でEmpty型のClientを作成
+        service = rospy.ServiceProxy('call_me', Empty)
+        # Clientを呼び出す
+        response = service()
+    except rospy.ServiceException, e:
+        print "Service call failed: %s" % e
+
+if __name__ == "__main__":
+    call_service()
+</code></pre>
+
+<h3>実行</h3>
+chmod 755で実行可能にした後、それぞれのプログラムを実行します。<br>
+service_server.pyを実行するとReady to serve.と表示されるので、service_client.pyを実行すると、Server側でcalled!と表示されます。呼び出しが成功したようです。
+
+<h2>Service通信をしてみよう(C++)</h2>
+-service_server.cpp-
+<pre><code> 
+#include <ros/ros.h>
+#include <std_srvs/Empty.h>
+
+bool handle_service(std_srvs::Empty::Request &req,
+std_srvs::Empty::Response &res)
+{
+    ROS_INFO("called!");
+    // 返り値を期待される型で返す
+    //return std_srvs::EmptyResponse()
+    return true;
+}
+
+int main(int argc, char **argv)
+{
+  ros::init(argc, argv, "service_server");
+  ros::NodeHandle n;
+
+  ros::ServiceServer service = n.advertiseService("call_me", handle_service);
+  ROS_INFO("Ready to serve.");
+  ros::spin();
+
+  return 0;
+}
+</code></pre>
+<br>
+
+-service_client.cpp- 
+<pre><code>
+#include <ros/ros.h>
+#include <std_srvs/Empty.h>
+
+int main(int argc, char **argv)
+{
+  ROS_INFO("waiting service");
+  ros::init(argc, argv, "service_client");
+  ros::NodeHandle n;
+  ros::ServiceClient client = n.serviceClient<std_srvs::Empty>("call_me");
+
+  std_srvs::Empty::Request req;
+  std_srvs::Empty::Response res;
+  if (client.call(req, res))
+  {
+    ROS_INFO("Recive response");
+  }else{
+    ROS_ERROR("Service call failed");
+    return 1;
+  }
+  return 0;
+}
+</code></pre>
+
+<h2>まとめ</h2>
+今回は実際にプログラムを書くことでROSの通信を理解していきました。<br>
+次回もその続きをやっていくのですが、ついでにシミュレーターも使ってみようと思います。<br>
+<a href="ros4.html">その４</a>
+
+
+           
+            <!-- footer -->
+            <div id="footer">
+                <p>&copy;Copyright 2019 Keisuke Hagiwara</p>
+            </div>
+        </div>
+    </body>
+</html>

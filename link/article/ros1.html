@@ -1,0 +1,107 @@
+﻿<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>Keisuke Hagiwara</title>
+        <meta name="twitter:card" content="summary"/>
+        <meta name="twitter:site" content="@_hagisuke"/>
+        <meta property="og:url" content="https://hagisuke.github.io/mypage/" />
+        <meta property="og:title" content="Keisuke Hagiwara" /> 
+        <meta property="og:description" content="Web Page of Keisuke Hagiwara" /> 
+        <meta property="og:image" content="../../images/sns_share.jpg" />
+        <meta property="og:locale" content="ja_JP" />
+
+        <!-- CSS Setting -->
+        <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    </head>
+    <body>
+        <div class="wrapper">
+            <!-- headerはまだ -->
+
+            <!-- 記事 -->
+<center><h1>ROSを始めよう　その１</h1></center>
+<h2>はじめに</h2>
+<a href="http://wiki.ros.org/ja">ROS</a>(Robot Operating System)といえば、世界中で使われているオープンソースのロボット用ソフトウェアプラットフォームです。<br>
+ロボットをやるなら是非マスターしておきたいところなのですが、学科の授業で扱ったことはあるものの結局使いこなせずじまい。。。<br>
+理解できていないところも多い。。。<br>
+ということで、この際ゼロから勉強を始めてみようと思います！<br>
+追記：<a href="https://qiita.com/srs/items/5f44440afea0eb616b4a">このROS講座</a>が神なので、今から記事を読んで勉強したい人はこっちを読むといいんじゃないですかね<br>
+
+<h2>この記事で利用する環境</h2>
+・Raspberry Pi3 model B<br>
+・Ubuntu MATE 16.04.2(Xenial)<br>
+・ROS Kinetic<br>
+・(microSDカードへのOS書き込みまで)MacのノートPC<br>
+なぜRaspberry Piを使うのか、と思われた方もいらっしゃるかもしれません。<br>
+本当は僕もノートPCにUbuntu18.04+ROS Melodicを入れて、最新版でやりたかったんですが、手元に丁度いいPCがなかったんですよね。でもラズパイとmicro SDカードはあったのでそれを使うことにしました。理由はそれだけです。今回は勉強が目的で、何かプロジェクトを予定しているわけではないですしね。
+
+<h2>まずは環境を整える</h2>
+今回は<a href="http://ai-coordinator.jp/ubuntu-mate-ros">こちらのサイト</a>を参考にさせていただきました。問題なく環境を整えることができ、大変助かりました。
+
+<h3>STEP1: Ubuntu MATEの準備</h3>
+Raspberry Piで利用するためにmicroSDカードにUbuntu MATEというOSを書き込む必要があります。今回は16GBのSDカードを使用しましたが、8GBでも良いと思います。<br>
+1. <a href="https://ubuntu-mate.org/download/">公式サイト</a>に行き、Raspberry Pi→16.04.2の順に選択する<br>
+2. ubuntu-mate-16.04.2-desktop-armhf-raspberry-pi.img.xzをクリックするとダウンロードされる<br>
+3. 新品でない場合はmicroSDを一度フォーマットしておく(<a href="https://komonon.jp/format-sd-card-mac/">参考</a>)<br>
+4. 先ほどダウンロードしたxzファイルを解凍する <br>
+$ brew install xz<br>
+$ xz -d ubuntu-mate-16.04.2-desktop-armhf-raspberry-pi.img.xz<br>
+5. microSDに書き込むため、SDをアンマウントする<br> 
+$ diskutil listでSDカードがどこにマウントされているか探す<br>
+/dev/disk3だった場合、$ sudo diskutil umount /dev/disk3とする<br>
+間違ったものをアンマウントしているとマズイので$ diskutil listで再度確認<br>
+6. OSをmicroSDカードに書き込む<br> 
+dd if=ubuntu-mate-16.04.2-desktop-armhf-raspberry-pi.img of=/dev/disk3 bs=1m 1時間程度かかる
+
+<h3>STEP2: Raspberry Pi3でのUbuntu MATEのセットアップ</h3>
+STEP1で準備したmicroSDカードをRaspberry Pi3に差し込み、起動するとセットアップが始まります。<br>
+指示に従って、WiFi設定やユーザー名や地域や言語を設定すれば良いです。<br>
+日本語を選ぶと、"ダウンロード"というように一部ディレクトリ名が日本語になってしまうのが厄介ですが、そこが気になる以外の問題はないと思います。
+
+<h3>STEP3: ROSのセットアップ</h3>
+Raspberry PiにROS Kineticをインストールする方法が<a href="http://wiki.ros.org/ROSberryPi/Installing%20ROS%20Kinetic%20on%20the%20Raspberry%20Pi">公式サイト</a>にまとめられています。<br>
+そのページの冒頭の文章を読むと、<br>
+today it is faster and easier to use Ubuntu Mate 16.04 (Xenial, download here) together with the standard ARM installation instructions here.<br>
+とありますので、hereをクリックすると、<a href="http://wiki.ros.org/kinetic/Installation/Ubuntu">今回参考にするページ</a>が出てきます。<br>
+これをそのまま実行していきましょう。<br>
+1. $ sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'これで１行なので注意！<br>
+2. $ sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116<br>
+3. $ sudo apt-get update<br>
+4. $ sudo apt-get upgradeかなり時間がかかる<br>
+5. $ sudo apt-get install ros-kinetic-desktop-full今回はフルバージョンを入れます<br>
+6. $ sudo rosdep initrosdepのインストール (自分でROSのパッケージをビルドするときに依存するライブラリを自動でインストールしてくれる)<br>
+7. $ rosdep update<br>
+8. $ echo "source /opt/ros/kinetic/setup.bash" >> ~/.bashrc環境変数の設定<br>
+9. $ source ~/.bashrc<br>
+10. $ sudo apt install python-rosinstall python-rosinstall-generator python-wstool build-essential各種便利コマンドのインストール<br>
+11. $ roscoreを実行し、最後の方にstarted core service [/rosout]と出て来れば問題無し、Ctrl+Cで終了(ROSでは基本的にコマンドはCtrl+Cで終了させます。)
+
+<h3>STEP4: その他の設定(必要であれば)</h3>
+sshでラズパイに接続したい場合<br>
+$ sudo apt install openssl-serverを実行してください。<br>
+接続の際に，port 22:Connection refusedとエラーが出るときは以下を実行するようです。<br>
+<pre><code>
+# 22番ポートの開放
+$ sudo ufw allow 22
+# sshの再起動
+$ sudo /etc/init.d/ssh restart
+# 起動時にsshの起動
+$ sudo systemctl enable ssh
+</code></pre>
+日本語入力がしたい場合<br>
+<a href="https://deviceplus.jp/hobby/raspberrypi_entry_049/">このサイト</a>を参考にしてください。<br>
+
+<h2>まとめ</h2>
+ということで、今回は環境の準備までを行いました。<br>
+これからROSの勉強を始めていきます。<br>
+<a href="ros2.html">その２</a>
+
+
+           
+            <!-- footer -->
+            <div id="footer">
+                <p>&copy;Copyright 2019 Keisuke Hagiwara</p>
+            </div>
+        </div>
+    </body>
+</html>

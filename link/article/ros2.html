@@ -1,0 +1,150 @@
+﻿<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>Keisuke Hagiwara</title>
+        <meta name="twitter:card" content="summary"/>
+        <meta name="twitter:site" content="@_hagisuke"/>
+        <meta property="og:url" content="https://hagisuke.github.io/mypage/" />
+        <meta property="og:title" content="Keisuke Hagiwara" /> 
+        <meta property="og:description" content="Web Page of Keisuke Hagiwara" /> 
+        <meta property="og:image" content="../../images/sns_share.jpg" />
+        <meta property="og:locale" content="ja_JP" />
+
+        <!-- CSS Setting -->
+        <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    </head>
+    <body>
+        <div class="wrapper">
+            <!-- headerはまだ -->
+
+            <!-- 記事 -->
+<center><h1>ROSを始めよう　その２</h1></center>
+<h2>前回の内容</h2>
+<a href="ros1.html">その１</a>
+
+<h2>今回の内容</h2>
+ROSの基礎知識を身に着け、ROSを体験する<br>
+参考：<br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/UnderstandingNodes">http://wiki.ros.org/ja/ROS/Tutorials/UnderstandingNodes</a><br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/UnderstandingTopics">http://wiki.ros.org/ja/ROS/Tutorials/UnderstandingTopics</a><br>
+<a href="http://wiki.ros.org/ja/ROS/Tutorials/UnderstandingServicesParams">http://wiki.ros.org/ja/ROS/Tutorials/UnderstandingServicesParams</a>
+
+<h2>参考にするもの</h2>
+主に参考にしたのは次の２つです。<br>
+- <a href="http://wiki.ros.org/ja/ROS/Tutorials">ROSwiki Tutorial</a><br>
+- <a href="https://www.amazon.co.jp/ROS%E3%81%A7%E3%81%AF%E3%81%98%E3%82%81%E3%82%8B%E3%83%AD%E3%83%9C%E3%83%83%E3%83%88%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0%E2%80%95%E3%83%95%E3%83%AA%E3%83%BC%E3%81%AE%E3%83%AD%E3%83%9C%E3%83%83%E3%83%88%E7%94%A8%E3%80%8C%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%83%AF%E3%83%BC%E3%82%AF%E3%80%8D-I%E3%83%BB-BOOKS-%E5%B0%8F%E5%80%89-%E5%B4%87/dp/4777519015">ROSではじめるロボットプログラミング―フリーのロボット用「フレームワーク」 (I・O BOOKS)</a><br>
+以下の書籍は目を通してみた感じとして、初心者にはやや厳しい印象を受けたので、今回はあまり参考にしませんでしたが、中級者レベルの方は読んでみると良いと思います。<br>
+- <a href="https://www.amazon.co.jp/ROS%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0-%E9%8A%AD-%E9%A3%9B/dp/4627853416/ref=pd_sim_14_5?_encoding=UTF8&pd_rd_i=4627853416&pd_rd_r=3a331bee-1e22-11e9-bf49-a1b91366b5d6&pd_rd_w=7kNf2&pd_rd_wg=QMajL&pf_rd_p=68cfebef-f8b4-4691-9d72-a10f0956615a&pf_rd_r=GNAVA1M7PBG6FVFECQZ9&psc=1&refRID=GNAVA1M7PBG6FVFECQZ9">ROSプログラミング</a> ---簡単な応用例が充実しているようなので、今後参考にするかもしれません<br>
+- <a href="https://www.amazon.co.jp/Raspberry-Pi%E3%81%A7%E5%AD%A6%E3%81%B6-ROS%E3%83%AD%E3%83%9C%E3%83%83%E3%83%88%E5%85%A5%E9%96%80-%E4%B8%8A%E7%94%B0-%E9%9A%86%E4%B8%80/dp/4822239292/ref=pd_sim_14_2?_encoding=UTF8&pd_rd_i=4822239292&pd_rd_r=3a331bee-1e22-11e9-bf49-a1b91366b5d6&pd_rd_w=7kNf2&pd_rd_wg=QMajL&pf_rd_p=68cfebef-f8b4-4691-9d72-a10f0956615a&pf_rd_r=GNAVA1M7PBG6FVFECQZ9&psc=1&refRID=GNAVA1M7PBG6FVFECQZ9">Raspberry Piで学ぶ ROSロボット入門</a><br>
+- <a href="https://www.amazon.co.jp/%E5%AE%9F%E7%94%A8%E3%83%AD%E3%83%9C%E3%83%83%E3%83%88%E9%96%8B%E7%99%BA%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AEROS%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0-%E8%A5%BF%E7%94%B0-%E5%81%A5/dp/462767581X/ref=pd_sbs_14_6?_encoding=UTF8&pd_rd_i=462767581X&pd_rd_r=6db8f561-1e22-11e9-b46b-c1dbd27410ef&pd_rd_w=rDhDC&pd_rd_wg=TZZ1M&pf_rd_p=cda7018a-662b-401f-9c16-bd4ec317039e&pf_rd_r=1PD3SQGPSS9XKAV3BTCV&psc=1&refRID=1PD3SQGPSS9XKAV3BTCV">実用ロボット開発のためのROSプログラミング</a><br>
+- <a href="https://www.amazon.co.jp/ROS%E3%83%AD%E3%83%9C%E3%83%83%E3%83%88%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0%E3%83%90%E3%82%A4%E3%83%96%E3%83%AB-%E8%A1%A8-%E5%85%81%E3%80%93/dp/4274221962/ref=pd_sbs_14_1?_encoding=UTF8&pd_rd_i=4274221962&pd_rd_r=6db8f561-1e22-11e9-b46b-c1dbd27410ef&pd_rd_w=rDhDC&pd_rd_wg=TZZ1M&pf_rd_p=cda7018a-662b-401f-9c16-bd4ec317039e&pf_rd_r=1PD3SQGPSS9XKAV3BTCV&psc=1&refRID=1PD3SQGPSS9XKAV3BTCV">ROSロボットプログラミングバイブル</a><br>
+- <a href="https://www.amazon.co.jp/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0ROS-%E2%80%95Python%E3%81%AB%E3%82%88%E3%82%8B%E3%83%AD%E3%83%9C%E3%83%83%E3%83%88%E3%82%A2%E3%83%97%E3%83%AA%E3%82%B1%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3%E9%96%8B%E7%99%BA-%E3%82%AA%E3%83%A9%E3%82%A4%E3%83%AA%E3%83%BC%E3%83%BB%E3%82%B8%E3%83%A3%E3%83%91%E3%83%B3-Morgan-Quigley/dp/4873118093/ref=pd_sbs_14_4?_encoding=UTF8&pd_rd_i=4873118093&pd_rd_r=6db8f561-1e22-11e9-b46b-c1dbd27410ef&pd_rd_w=rDhDC&pd_rd_wg=TZZ1M&pf_rd_p=cda7018a-662b-401f-9c16-bd4ec317039e&pf_rd_r=1PD3SQGPSS9XKAV3BTCV&psc=1&refRID=1PD3SQGPSS9XKAV3BTCV">プログラミングROS ―Pythonによるロボットアプリケーション開発 (オライリー・ジャパン)</a>
+
+<h2>ROSの基本用語</h2>
+ここではROSの基本用語と考え方をざっくりと理解します。
+
+<h3>Node</h3>
+ROSでは１つのプロセスをNodeと呼びます。<br>
+それぞれのNodeは「キーボード入力を受ける」とか「カメラ画像を取得する」とか「モータを動かす」とか「ログを出力する」とかです。<br>
+これは、複数のNode同士がつながってグラフを作るためです。<br>
+複数のプログラムを結合する通信ライブラリこそがROSの中心部であるとも言えます。
+
+<h3>Message</h3>
+ROSで通信するためにはあらかじめ決められた型が必要なのですが、型を持った通信で受け渡しされるデータのことをMessageと呼びます。
+
+<h3>Master</h3>
+roscoreコマンドで起動するプロセスで、ROSのNode同士が通信するための名前の解決をしてくれます。必ず最初に起動しておく必要があります。
+
+<h2>ROSの通信方法</h2>
+先ほど、ROSではNode同士が通信すると述べました。<br>
+ここではその通信方法をざっくりと理解します。
+
+<h3>Topic</h3>
+ROSのNodeがPublusher/Subscriberモデルでデータを送受信する通信方法です。<br>
+あるNodeがあるTopicにデータをPublishして(送信)、そのTopicから別のNodeがデータをSubscribeします(受信)。このとき送受信されるデータがMessageと呼ばれるのでしたね。<br>
+このとき、それぞれのNodeは通信相手が誰なのかを意識することなく通信することができます。これは、Topicの型が決まっているため、相手のIPアドレスやポート番号の情報が通信に必要ないからです。<br>
+相手を仮定しない通信であるため、相手からの返事を待たない非同期通信となります。<br>
+<img src="images/ros_topic.png" width="50%"><br>
+
+<h3>Service</h3>
+相手に何かをしてもらい、その成否を知りたいときに利用する同期通信です。<br>
+ここではあるNodeをServer、別のNodeをClientと呼ぶことにします。ServerはClientに呼び出されたら何らかの処理をしてくれます(サービスを提供)。そしてその成否をClientに返します。Clientに呼び出されるまでは待機しています。それに対してClientはServerを呼び出し、何らかの処理をさせます(サービスを要求)。そしてServerから成否が返ってくるのを待つのですが、その間Client側の処理は止まります。<br>
+<img src="images/ros_service.png" width="50%"><br>
+
+<h3>Parameter</h3>
+同じプログラムで様々なロボットを動かせるように、ロボットごとに詳細なパラメータを通信により設定します。
+
+<h3>Action</h3>
+Serviceでは成否が返ってくるまでClient側の処理が止まってしまい、その間の処理を中断したり、途中の様子を見たりすることができません。別のTopicやServiceを立ち上げて併用すれば良いのですが、そんなことをしなくてもActionというものを使えば、まとめて行うことができます。ここではNodeをActionServer、ActionClientと呼ぶことにします。actionlibというライブラリを利用して実装するのですが、詳しくは実装時に見ていきましょう。
+
+<h2>ROSの各通信方法を体験する</h2>
+ここではturtlesimというちょっとしたロボットシミュレータ(ロボットというか亀ですが)を使って先ほど紹介した各通信方法を体験し、何となく感覚をつかみます。また、幾つかの基本的なコマンドにも慣れていきましょう。<br>
+先に注意しておくと、ROSでは複数のターミナル(端末)を立ち上げることになります。Ctrl+Shift+Tなどをうまく使って、できるだけごちゃごちゃにならないようにしましょう。
+
+<h3>まず最初に必ずすること</h3>
+$ roscoreコマンドでMasterを起動しましょう。<br>
+このターミナルはそのままにしておく必要があります。
+
+<h3>亀を動かすためのプログラムを走らせる</h3>
+ターミナルをもう1つ立ち上げて、$ rosrun turtlesim turtlesim_nodeを実行しましょう。(必要に応じて$ sudo apt-get install ros-kinetic-turtlesimでインストール)<br>
+ちなみにこのrosrunはプログラムを実行するコマンドです。<br>
+上手くいかないときは、$ sudo apt-get install ros-kinetic-ros-tutorialsをしてみましょう。
+
+<h3>キーボード操作するためのプログラムを走らせる</h3>
+ターミナルをもう1つ立ち上げて、$ rosrun turtlesim turtle_teleop_keyを実行しましょう。<br>
+このターミナル上で矢印キーを押すと亀が動きます。<br>
+実はこれがもうTopicによる通信なのです。それがよくわかるように次は可視化してみたいと思います。<br>
+<img src="images/turtle.png" width="50%"><br>
+
+<h3>可視化ツールを使ってみる</h3>
+新しいターミナルを立ち上げて、$ rqt_graphというコマンドを打つと、Nodeの関係が表示されます。<br>
+<img src="images/rqt_graph.jpg" width="50%"><br>
+見てみると、teleop_turtleというNodeとturtlesimというNodeが、/turtle1/cmd_velというTopicで結ばれています。teleop_turtleというNodeではキーボードの入力を速度指令に変換して、TopicにPublishしています。そのTopicからturtlesimというNodeが速度指令をSubscribeして亀を動かしています。2つのNodeはお互いを意識せずに通信をしているのです。
+
+<h3>コマンドrostopic</h3>
+新しいターミナルを立ち上げて、$ rostopic echoというコマンドを打ってみましょう。これはTopicを詳しく見ることができるコマンドなのですが、このままではよくわかりません。<br>
+そこで、$ rostopic echo /turtle1/cmd_velと打ってみましょう。先ほどrqt_graphで見ましたが、/turtle1/cmd_velというのはTopicの名前ですね。この状態で亀を動かしてみると、linear、angularのように前進速度と回転速度のデータが表示されると思います。このようにrostopicではTopicを詳しく見ることができるのです。<br>
+ちなみに、このrostopicも実は1つのNodeであり、今回の場合はTopicからSubscribeすることで、情報を取得しているのです。<br>
+それでは、他の使い方も見てみましょう。<br>
+$ rostopic type /turtle1/cmd_velこれでTopicの型を調べることができます。今回のTopicの型はgeometry_msgs/Twistのようです。<br>
+$ rostopic pub /turtle1/cmd_vel geometry_msgs/Twist -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, 1.8]'型がわかればTopicにPublishして値を書き込めます。亀が動きましたか？<br>
+$ rostopic pub -r 1 /turtle1/cmd_vel geometry_msgs/Twist -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, 1.8]'オプションで-r 1を加えると1Hz(1秒に1回)データ送信を繰り返します。<br>
+$ rostopic list現在登録されている全Topicの一覧表示
+
+<h3>コマンドrosservice</h3>
+$ rosservice list現在利用可能な全Serviceの一覧表示<br>
+この中に/spawnという亀を生成するServiceがあるので、これを使ってみましょう。<br>
+$ rosservice type /spawn | rossrv showでServiceの引数と返り値を調べます。<br>
+<pre><code>
+$ rosservice type /spawn | rossrv show
+float32 x
+float32 y
+float32 theta
+string name
+---
+string name
+</code></pre>
+どうやら座標x, yと姿勢thetaを入力として、そこにnameという名前の亀を生成し、成否をnameで出力するようですね。<br>
+$ rosservice call /spawn 2 3 1 'kame'で実際にServiceを呼び出せます。
+
+<h3>コマンドrosparam</h3>
+$ rosparam list現在セットされている全Parameterの一覧表示<br>
+$ rosparam get /background_bParameterにセットされた値の取得(ここでは背景色の青成分)<br>
+$ rosparam set /background_b 100Parameterに値をセット<br>
+あれ、色が変わりません。実はParameterは基本的に起動時に1回読み取るものなので、$rosservice call /clearというコマンドで/clearというServiceを呼び出して、更新しましょう。色は変わりましたか？
+
+<h2>まとめ</h2>
+今回はROSの基礎知識を身に着け、幾つかのコマンドによってROSを体験していきました。<br>
+次回はついにプログラムを書いていこうと思います。<br>
+<a href="ros3.html">その３</a>
+
+
+           
+            <!-- footer -->
+            <div id="footer">
+                <p>&copy;Copyright 2019 Keisuke Hagiwara</p>
+            </div>
+        </div>
+    </body>
+</html>

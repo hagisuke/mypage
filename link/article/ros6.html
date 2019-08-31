@@ -1,0 +1,170 @@
+﻿<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>Keisuke Hagiwara</title>
+        <meta name="twitter:card" content="summary"/>
+        <meta name="twitter:site" content="@_hagisuke"/>
+        <meta property="og:url" content="https://hagisuke.github.io/mypage/" />
+        <meta property="og:title" content="Keisuke Hagiwara" /> 
+        <meta property="og:description" content="Web Page of Keisuke Hagiwara" /> 
+        <meta property="og:image" content="../../images/sns_share.jpg" />
+        <meta property="og:locale" content="ja_JP" />
+
+        <!-- CSS Setting -->
+        <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    </head>
+    <body>
+        <div class="wrapper">
+            <!-- headerはまだ -->
+
+            <!-- 記事 -->
+<center><h1>ROSを始めよう　その６</h1></center>
+<h2>前回の内容</h2>
+<a href="ros5.html">その５</a>
+
+<h2>今回の内容</h2>
+今回はROSのGUIについて見ていきましょう。<br>
+参考：<a href="http://wiki.ros.org/ja/visualization/Tutorials">http://wiki.ros.org/ja/visualization/Tutorials</a>
+
+<h2>可視化ツールrviz</h2>
+rvizというツールを使うと、ロボットの内部情報やセンサの可視化ができます。
+
+<h3>立ち上げ方</h3>
+roscoeを立ち上げた後、$ rosrun rviz rvizで立ち上げます。
+
+<h3>Turtlebotシミュレーターで使ってみる</h3>
+<pre><code>
+シミュレーターのインストール
+$ sudo apt-get install ros-kinetic-turtlebot-gazebo
+$ source ~/.bashrc
+立ち上げる
+$ roslaunch turtlebot_gazebo turtlebot_world.launch
+別のターミナルで自律移動プログラムも立ち上げる
+$ roslaunch turtlebot_gazebo amcl_demo.launch
+別のターミナルでrvizを立ち上げる
+$ rosrun rviz rviz
+</code></pre>
+最初は何も表示されていないのですが、画面左下のAddボタンから表示するものを追加できます。<br>
+画面左に並んでいるのは表示中のものです。<br>
+<img src="images/rviz.png" width="50%"><br>
+
+例えば、<br>
+By display typeからRobotModelを選ぶと、ロボットのモデルが表示されます。<br>
+By topicから/mapのMapを選ぶと、あらかじめ作成された地図が表示されます。<br>
+/camera/depth/pointsのPointCloud2を選ぶと、Kinectのセンサ情報が表示されます。<br>
+/odomのOdometryを選ぶと、ロボットの現在位置が表示されます。<br>
+/move_base/NavfnROS/planのPathを選ぶと、ロボットの行きたい経路が表示されます。<br>
+これらはPublishされているTopicを３次元的に表示させているのです。<br>
+また、画面上方の2D Navi Goalボタンを押して、ロボット近くの地面をドラッグすると、ロボットを自律移動させることができます。表示される緑の矢印の根元がゴール位置、向きがロボットのゴール姿勢となります。
+
+<h2>rqt</h2>
+これまでもrqt_graphやrqt_consoleなどを使ってきましたが、その仲間を紹介します。
+
+<h3>rqt_plot</h3>
+PublishされているTopicの値をグラフにできます。$ rqt_plotで立ち上がります。<br>
+<img src="images/rqt_plot.jpg" width="50%"><br>
+上の欄に/turtle1/cmd_vel/linear/xなどと書いて＋ボタンを押すか、$ rqt_plot /turtle1/cmd_vel/linear/xとして立ち上げれば良い。
+
+<h3>rqt_ez_publisher</h3>
+スライダーなどでTopicにPublishできます。<br>
+<pre><code>
+インストール
+$ sudo apt-get install ros-kinetic-rqt-ez-publisher
+$ roscore
+$ rosrun turtles turtles_node
+$ rosrun rqt_ez_publisher rqt_ez_publisher
+</code></pre>
+これで立ち上がります。画面上でTopicを選択すると、/turtle1/cmd_velをPublishするGUIなどにできます。<br>
+<img src="images/rqt_ez.jpg" width="50%"><br>
+
+<h3>rqt</h3>
+今まで出てきた複数のrqtのモジュールを同じWindowにまとめてみましょう。<br>
+$ rqtで立ち上げて、画面上のPluginsからVisualizationのPlotやEasy Message Publisherを選択すると、同じWindowにまとまります。<br>
+<img src="images/rqt.jpg" width="50%"><br>
+
+<h2>ジョイスティックで操縦する</h2>
+ジョイスティックでロボットを操縦したい時もあると思いますので、簡単に方法を紹介します。<br>
+ls -l /dev/input/js*みたいにすると認識されているジョイスティックがわかります。<br>
+まず、$ rosrun joy joy_node (/dev/input/js0以外で認識されているジョイスティックを使うなら$ rosrun joy joy_node _dev:=/dev/input/js1)を実行すると、sensor_msgs/Joy型の/joyというTopicをPublishします。<br>
+それを使って、０番ボタンを押しながら移動操作ができるプログラムを実行してみましょう。<br>
+-joy_twist.py- 
+<pre><code>
+import rospy
+from sensor_msgs.msg import Joy
+from geometry_msgs.msg import Twist
+
+class JoyTwist(object):
+    def __init__(self):
+        self._joy_sub = rospy.Subscriber('joy', Joy, self.joy_callback, queue_size=1)
+        self._twist_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
+
+    def joy_callback(self, joy_msg):
+        if joy_msg.buttons[0] == 1:
+            twist = Twist()
+            twist.linear.x = joy_msg.axes[1] * 0.5
+            twist.angular.z = joy_msg.axes[0] * 1.0
+            self._twist_pub.publish(twist)
+
+if __name__ == '__main__':
+    rospy.init_node('joy_twist')
+    joy_twist = JoyTwist()
+    rospy.spin()
+</code></pre>
+$ roslaunch kabuki_gazebo kabuki_playground.launchでシミュレーターを実行し、<br>
+$ rosrun ros_beginner joy_twist.py cmd_vel:=/mobile_base/commands/velocityで実行します。<br>
+ちなみに$ sudo apt-get install ros-kinetic-teleop-twist-joyで機能が色々使えるようになります。<br>
+C++だと、<br>
+-joy_twist.cpp- 
+<pre><code>
+#include <ros/ros.h>
+#include <sensor_msgs/Joy.h>
+#include <geometry_msgs/Twist.h>
+
+class JoyTwist
+{
+public:
+  JoyTwist()
+  {
+    ros::NodeHandle node;
+    joy_sub_ = node.subscribe("joy", 1, &JoyTwist::joyCallback, this);
+    twist_pub_ = node.advertise<geometry_msgs::Twist>("cmd_vel", 1);
+  }
+
+  void joyCallback(const sensor_msgs::Joy &joy_msg)
+  {
+    if (joy_msg.buttons[0] == 1)
+    {
+      geometry_msgs::Twist twist;
+      twist.linear.x = joy_msg.axes[1] * 0.5;
+      twist.angular.z = joy_msg.axes[0] * 1.0;
+      twist_pub_.publish(twist);
+    }
+  }
+private:
+  ros::Subscriber joy_sub_;
+  ros::Publisher twist_pub_;
+};
+
+int main(int argc, char **argv) {
+  ros::init(argc, argv, "joy_twist");
+  JoyTwist joy_twist;
+  ros::spin();
+}
+</code></pre>
+と書けますので、CMakeLists.txtを編集してcatkin_makeでビルドして、rosrun ros_beginner joy_twistで実行しましょう。
+
+<h2>まとめ</h2>
+今回はROSのGUIについて見ていきました。<br>
+次回はROSの分散機能について見ていきましょう。<br>
+<a href="ros7.html">その７</a>
+
+
+           
+            <!-- footer -->
+            <div id="footer">
+                <p>&copy;Copyright 2019 Keisuke Hagiwara</p>
+            </div>
+        </div>
+    </body>
+</html>

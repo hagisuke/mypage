@@ -1,0 +1,119 @@
+﻿<!doctype html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>Keisuke Hagiwara</title>
+        <meta name="twitter:card" content="summary"/>
+        <meta name="twitter:site" content="@_hagisuke"/>
+        <meta property="og:url" content="https://hagisuke.github.io/mypage/" />
+        <meta property="og:title" content="Keisuke Hagiwara" /> 
+        <meta property="og:description" content="Web Page of Keisuke Hagiwara" /> 
+        <meta property="og:image" content="../../images/sns_share.jpg" />
+        <meta property="og:locale" content="ja_JP" />
+
+        <!-- CSS Setting -->
+        <link rel="stylesheet" type="text/css" href="../../css/style.css">
+    </head>
+    <body>
+        <div class="wrapper">
+            <!-- headerはまだ -->
+
+            <!-- 記事 -->
+<center><h1>ROSを始めよう　その８</h1></center>
+<h2>前回の内容</h2>
+<a href="ros7.html">その７</a>
+
+<h2>今回の内容</h2>
+今回は座標変換ツールtfなどを見ていきましょう。<br>
+参考：<br>
+<a href="http://wiki.ros.org/ja/tf/Tutorials">http://wiki.ros.org/ja/tf/Tutorials</a><br>
+<a href="http://wiki.ros.org/ja/urdf/Tutorials/Create%20your%20own%20urdf%20file">http://wiki.ros.org/ja/urdf/Tutorials/Create%20your%20own%20urdf%20file</a><br>
+<a href="http://wiki.ros.org/ja/pcl/Tutorials">http://wiki.ros.org/ja/pcl/Tutorials</a>
+
+<h2>座標変換ツールtf</h2>
+ロボットアームなどを動かす時には、関節角度から手先の位置を求める順運動学の問題などを解く必要があります。tfはこれを手助けしてくれるツールです。
+
+<h3>PR2を動かしてみる</h3>
+$roslaunch pr2_gazebo pr2_empty_world.launchでシミュレーターを立ち上げる。<br>
+次に動かす際に便利なライブラリを取ってきます。(まだリリースされていないソフトです。)<br>
+<pre><code>
+$ cd ~/catkin_ws/src
+$ git clone https://github.com/OTL/ez_utils.git
+$ cd ~/catkin_ws
+$ catkin_make
+</code></pre>
+そして$ rosrun rviz rvizとrvizを立ち上げて、Robot Modelを表示します。(表示されない場合、画面左のGlobal Optionsをbase_linkにセットしましょう。)<br>
+さらに、TFをAddして表示しましょう。(画面左のTFのFramesのAll Enabledをクリックして表示を外して見やすくしましょう。)<br>
+TFのhead_plate_frameとl_gripper_led_frameにチェックを入れると、PR2の頭と左手先のフレームが表示されます。<br>
+$ rosrun tf tf_echo /head_plate_frame /l_gripper_led_frameと打つと、/head_plate_frameから見た/l_gripper_led_frameの座標系、すなわち相対位置を得られます。
+
+<h3>常に頭が左手先を見続けるプログラムを作ってみる</h3>
+-look_hand.py- 
+<pre><code>
+#!/usr/bin/env python
+import rospy
+import tf2_ros
+from ez_utils.ez_joints import JointsServer
+
+if __name__ == '__main__':
+    rospy.init_node('pr2_look_left_hand')
+    # TFのデータを蓄えるバッファを作成
+    tf_buffer = tf2_ros.Buffer()
+    # TransformListenerを作成
+    tf_listener = tf2_ros.TransformListener(tf_buffer)
+    # 頭と左腕をTopicで動かせる状態にする
+    head = JointsServer('/head_traj_controller')
+    left_arm = JointsServer('/l_arm_controller')
+    # 首の角度の初期化
+    yaw_angle = 0.0
+    pitch_angle = 0.0
+    rate = rospy.Rate(10.0)
+    while not rospy.is_shutdown():
+        try:
+            # frame間の相対関係を取得
+            trans = tf_buffer.lookup_transform('head_plate_frame',
+                                               'l_gripper_led_frame',
+                                               rospy.Time())
+            # 首の角度を決定
+            yaw_angle = trans.transform.translation.y / 1.0
+            pitch_angle = -trans.transform.translation.z / 1.0
+            print trans.transform.translation
+            # 角度をロボットに送信
+            head.set_positions([yaw_angle, pitch_angle])
+        except (tf2_ros.LookupException, tf2_ros.ConnectivityException, 
+                tf2_ros.ExtrapolationException):
+            rospy.logwarn('tf not found')
+        rate.sleep()
+</code></pre>
+chmodで実行可能にし、$ rosrun ros_beginner look_hand.pyで実行しましょう。<br>
+rosrun rqt_ez_publisher rqt_ez_publisherでrqt_ez_publisherを立ち上げ、左手先を動かしてみましょう。<br>
+Topicとして/l_arm_controller/follow_positionを選択して追加し、スライダーで動かすことができます。
+
+<h2>その他の基本的なライブラリ</h2>
+
+<h3>ロボット定義フォーマットURDF</h3>
+ROSで自作ロボットを使う場合などに、ロボットの見た目やモーターの配置、センサーの配置を定義するファイルが必要になります。これがURDFです。<br>
+参考：<a href="http://wiki.ros.org/urdf">http://wiki.ros.org/urdf</a>
+
+<h3>3次元点群処理PointCloud Library</h3>
+3次元点群を扱った認識プログラムを書く際に縁なライブラリとしてpcl_rosがあります。<br>
+参考：<a href="http://wiki.ros.org/pcl_ros">http://wiki.ros.org/pcl_ros</a>
+
+<h3>InteractiveMarkers</h3>
+rvizを使って入力をするためのツールです。<br>
+参考：<a href="http://wiki.ros.org/interactive_markers">http://wiki.ros.org/interactive_markers</a>
+
+<h2>まとめ</h2>
+今回は座標変換ツールtfなどを見ていきました。<br>
+次回は、Arduinoなどによる自作ロボットの動かし方を見ていきましょう。<br>
+<a href="ros9.html">その９</a>
+
+
+           
+            <!-- footer -->
+            <div id="footer">
+                <p>&copy;Copyright 2019 Keisuke Hagiwara</p>
+            </div>
+        </div>
+    </body>
+</html>
