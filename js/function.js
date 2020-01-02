@@ -8,16 +8,4 @@ $(function(){
         
         return false;
     });
-    
-    //スクロールしたらヘッダー背景
-    //var wH = $(window).height();
-    var wH = $('#header-point').offset().top;
-    $(window).on('load scroll', function() {
-        var value = $(this).scrollTop();
-        if ( value > wH ) {
-            $('header').addClass('header_background');
-        } else {
-            $('header').removeClass('header_background');
-        }
-    });
 });
