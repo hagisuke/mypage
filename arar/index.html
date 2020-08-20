@@ -52,13 +52,7 @@
                 smoothThreshold="5"
             >
                 <!-- 写真の場所にCGモデルを置く -->
-                <a-obj-model
-                    src="#obj"
-                    mtl="#mtl"
-                    scale="0.005 0.005 0.005"
-                    position="0 0.5 0">
-                </a-obj-model>
-                </a-entity>
+                <a-entity obj-model="obj: #obj; mtl: #mtl" ></a-entity>
             </a-nft>
             <a-entity camera></a-entity>
         </a-scene>
