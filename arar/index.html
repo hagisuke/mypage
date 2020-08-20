@@ -38,8 +38,8 @@
         >
             <!-- OBJ形式のCGモデルの読み込み -->
             <a-assets>
-                <a-asset-item id="obj" src="rocket.obj"></a-asset-item>   <!-- objファイル -->
-                <a-asset-item id="mtl" src="rocket.mtl"></a-asset-item>   <!-- mtlファイル -->
+                <a-asset-item id="obj" src="https://arjs-cors-proxy.herokuapp.com/https://raw.githack.com/hagisuke/mypage/master/arar/rocket.obj"></a-asset-item>   <!-- objファイル -->
+                <a-asset-item id="mtl" src="https://arjs-cors-proxy.herokuapp.com/https://raw.githack.com/hagisuke/mypage/master/arar/rocket.mtl"></a-asset-item>   <!-- mtlファイル -->
             </a-assets> 
 
             <!-- 特徴ファイルをセット -->
@@ -52,11 +52,12 @@
                 smoothThreshold="5"
             >
                 <!-- 写真の場所にCGモデルを置く -->
-                <a-entity
-                    gltf-model="https://arjs-cors-proxy.herokuapp.com/https://raw.githack.com/AR-js-org/AR.js/master/aframe/examples/image-tracking/nft/trex/scene.gltf"
-                    scale="5 5 5"
-                    position="50 150 0"
-                >
+                <a-obj-model
+                    src="#obj"
+                    mtl="#mtl"
+                    scale="0.005 0.005 0.005"
+                    position="0 0.5 0">
+                </a-obj-model>
                 </a-entity>
             </a-nft>
             <a-entity camera></a-entity>
