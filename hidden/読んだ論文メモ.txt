@@ -1,0 +1,802 @@
+[[萩原啓介]]
+
+O. H. Yeoh, “Some forms of the strain energy function for rubber,” Rubber Chemistry and technology, vol. 66, no. 5, pp. 754–771, 1993.
+P. Polygerinos, S. Lyne, Z. Wang, L. F. Nicolini, B. Mosadegh, G. M. Whitesides, and C. J. Walsh, “Towards a soft pneumatic glove for hand rehabilitation,” in 2013 IEEE/RSJ International Conference on Intelligent Robots and Systems. IEEE, 2013, pp. 1512–1517.
+Yuta YAMANAKA, Sho KATAGIRI, Hiroyuki NABAE, Koichi SUZUMORI, Gen ENDO. Development of a Food Handling Soft Robot Hand Considering a High-speed Pick-and-place Task, 2020 IEEE/SICE International Symposium on System Integration, 2020 IEEE/SICE International Symposium on System Integration, IEEE, pp. 87-92, Jan. 2020.
+
+ <Related Work>
+ ・ソフトロボットの作り方については、以下
+ A Recipe for Soft Fluidic Elastomer RobotsやReview of Manufacturing Processes for Soft Biomimetic Robots 
+ 
+ ・ソフトロボットには空圧、水圧、油圧で駆動するものがある。
+ 東工大のSlimSlimeは金属のベローズを空圧で駆動するヘビ型ロボットである。
+ Soft Machines That are Resistant to Puncture and That Self SealやA soft-robotic gripper with enhanced object adaptation and grasping reliabilityやHigh-Force Soft Printable Pneumatics for Soft Robotic Applications(5kg持てる！)や
+ A novel type of compliant and underactuated robotic hand for dexterous graspingやApplying a flexible microactuator to robotic mechanismsやFlexible Microactuator for Miniature Robotsも空圧である。
+ A Prestressed Soft Gripper: Design, Modeling, Fabrication, and Tests for Food Handling(TangoPlus使ってるショア硬度からヤング率の出し方が書いてある)やSoft Gripper Dynamics Using a Line-Segment Model with an Optimization-Based Parameter Identification Methodも
+ Soft robotic glove for combined assistance and at-home rehabilitationやHydraulic hydrogel actuators and robots optically and sonically camouflaged in waterや
+ Hydraulic autonomous soft robotic fish for 3D swimmingやCyclic hydraulic actuation for soft robotic devicesやAutonomous undulatory serpentine locomotion utilizing body dynamics of a fluidic soft robot は水圧駆動である。
+ 油圧は？（鈴木さん修論や室谷さん修論を読み直そう）
+ 
+ ・柔らかい素材を用いたロボットハンドの研究について述べる。
+ A compliant, underactuated hand for robust manipulationではiHYハンドと呼ばれる関節部分に弾性体を用いたハンドが開発されている。
+ 5自由度油圧駆動Hydraハンドの開発では油圧シリンダによるワイヤ駆動のハンドであり、高出力とバックドライバビリティを実現している。
+ 
+ ・連続体マニピュレータのための運動学的モデリングについては以下
+ Closed-form inverse kinematics for continuum manipulators曲率利用して逆運動学の定式化
+ Kinematics for multisection continuum robots幾何学的に連続体ロボットの運動学を導出している、曲率利用
+ Practical kinematics for real-time implementation of continuum robots曲率利用で幾何学計算、ケーブル式と気圧式で実験
+ Position control of an underactuated continuum mechanism using a reduced nonlinear modelケーブル駆動でロボットの首部を実現
+ Computing and controlling compliance of a robotic hand剛体ロボットハンドのコンプライアンス制御の話(今回は無関係？)
+ Multigait soft robot
+ https://www.pnas.org/content/pnas/suppl/2011/11/22/1116564108.DCSupplemental/pnas.1116564108_SI.pdf?targetid=SM1 チャンバーモデリング
+ 
+ ・運動学的モデリング方法　 PCC modeling assumption
+ Design and kinematic modeling of constant curvature continuum robots: A reviewロボット依存の写像(アクチュエータ→曲率、弧長、回転角度)とロボット非依存の写像（曲率→タスク空間）にわけて区分的に考える
+ Design, kinematics, and control of a soft spatial fluidic elastomer manipulatorPCCでモデリングして曲率の閉ループ追従制御(PID?)やFKによる先端位置制御を実現
+ Visual servoing of soft robot manipulator in constrained environments with an adaptive controller先端にカメラを付けて視覚サーボ位置制御、PCCモデル利用
+ Model-based feedforward position control of constant curvature continuum robots using feedback linearization動的モデルも考慮、フィードバック線形化を利用した位置制御
+ Kinematics and the implementation of an elephant’s trunk manipulator and other continuum style robots古い曲率一定モデル
+ Design and control of a soft and continuously deformable 2D robotic manipulation system閉ループ位置制御、PCCモデル
+ Whole arm planning for a soft and highly compliant 2D robotic manipulatorアームの平面走査
+ Autonomous Object Manipulation Using a Soft Planar Grasping Manipulator平面上物体把持計画、位置のフィードバックはカメラ画像
+ Dynamic Control of Soft Robots Interacting with the Environment動的制御、曲率追従とインピーダンス制御による表面追従で環境との相互作用を考慮
+ Building and Controlling Fluidically Actuated Soft博士論文なので使わない
+ 
+ ・制御方法　ロッド理論
+ Geometrically exact models for soft robotic manipulators
+ Discrete cosserat approach for multi-section soft robots dynamics
+ Control space reduction and real-time accurate modeling of continuum manipulators using ritz and ritz-galerkin methods
+ 
+ ・制御方法　リアルタイムFEM
+ Control of elastic soft robots based on real-time finite element method アクチュエータの力の寄与をreduced conpliance matrixで求める(逆運動学)、Gauss-Seidel algorithm、開ループ位置制御まで(シンプルなものだけ)
+ Real-time control of soft-robots using asynchronous finite element modeling非同期FEM計算
+ Kinematic modeling and observer based control of soft robot using real-time finite element method視覚サーボのオブザーバベースの閉ループ位置制御
+ Controllability pre-verification of silicone soft robots based on finite-element method設計の話、事前にFEMで可制御な設計になっているか計算
+ Optimization-based inverse model of soft robots with contact handling相互作用や自己接触を扱えるように逆問題を線形相補性制約付き二次計画QPとして定式化
+ Fast, generic, and reliable control and simulation of soft robots using model order reductionオフラインで全体モデルのFEMを計算後、オンラインでは徳一分解で状態変数の次元削減されたモデルでFEM計算する 
+ 
+ ・制御方法　モデル予測制御
+ Simultaneous position and stiffness control for an inflatable soft robot
+ Control of a pneumatically actuated fully inflatable fabric-based humanoid robot 
+ A New Soft Robot Control Method Using Model Predictive Control for a Pneumatically Actuated Humanoid
+ 
+ ・制御方法　CV
+ Using vision for pre-and post grasping object localization for soft hands
+ Learning object grasping for soft robot hands
+ 
+ ・制御方法　NN
+ A neural network controller for continuum robots
+ A feed-forward neural network learning the inverse kinetics of a soft cable-driven manipulator moving in three-dimensional space
+ A framework for the automated design and modelling of soft robotic systems
+ 
+ ・制御方法　動的モデル
+ Dynamics and trajectory optimization for a soft spatial fluidic elastomer manipulator
+ 
+ ・制御方法　その他
+ Controlling soft robots: balancing feedback and feedforward elements
+ 
+ ・今回は無関係？
+ リザバー計算Exploiting short-term memory in soft body dynamics as a computational resource
+ ロボット衝突Robot collisions: A survey on detection, isolation, and identification
+ 運動制御Internal models for motor control and trajectory planning
+ ロバストな制御Operational space control: A theoretical and empirical comparison
+ A unified approach for motion and force control of robot manipulators: The operational space formulation
+ PD+なやつGlobally asymptotically stable ‘pd+’controller for robot manipulators
+ 
+ ・SEAやEHA
+ Series elastic actuatorsとかA high torque to weight ratio robot actuatorとかDesign of a new high performance electrohydraulic actuatorやCurrent-pressure-position triple-loop feedback control of electo-hydrostatic actuators for humanoid robotsやSmall size hydraulic pumps with low heat generation for electro hydrostatic actuation of humanoid robots
+
+--Segmentation DAのサーベイ
+---https://github.com/shuto-keio/paper_summary/issues/18
+---https://github.com/HX-idiot/FADA-Pytorch
+---https://paperswithcode.com/paper/domain-adaptive-few-shot-learning
+---https://github.com/zhaoxin94/awesome-domain-adaptation
+---An Adversarial Perturbation Oriented Domain Adaptation Approach for Semantic Segmentation(2020)~
+疑似ラベルを用いた敵対的学習
+---MLSL: Multi-Level Self-Supervised Learning for Domain Adaptation with Spatially Independent and Semantically Consistent Labeling(2020)~
+Targetに対する疑似ラベル生成とSourceとTargetによるセグメンテーション学習を繰り返す。疑似ラベルはカテゴリバランスが同じになるように信頼できる箇所だけ用意する。
+---Category Anchor-Guided Unsupervised Domain Adaptation for Semantic Segmentation(2019)~
+カテゴリの重心を考慮
+---Guided Curriculum Model Adaptation and Uncertainty-Aware Evaluation for Semantic Nighttime Image Segmentation(2019)~
+カリキュラムを使う
+---Constructing Self-motivated Pyramid Curriculums for Cross-Domain Semantic Segmentation: A Non-Adversarial Approach(2019)~
+Sourceで学習済みのモデルをTarget画像とSourceのラベルからなるピラミッドカリキュラムで更新する
+---SSF-DAN: Separated Semantic Feature Based Domain Adaptation Network for Semantic Segmentation(2019)~
+最終層の特徴量を識別器に入れる
+---Significance-aware Information Bottleneck for Domain Adaptive Semantic Segmentation(2019)~
+教師ありと敵対的学習は普通、特徴抽出器にInformation Constraint Lossを加えている
+---Domain Adaptation for Semantic Segmentation with Maximum Squares Loss(2019)~
+Maximum Squares Lossというものを導入することでTargetを決定境界から離してSource寄りにさせる
+---Self-Ensembling with GAN-based Data Augmentation for Domain Adaptation in Semantic Segmentation(2019)~
+Source画像をTarget画像の情報を用いて変換する
+---DADA: Depth-aware Domain Adaptation in Semantic Segmentation(2019)~
+深度情報利用
+---Domain Adaptation for Structured Output via Discriminative Patch Representations(2019)~
+パッチレベルでクラス予測分布を調整する。
+---Not All Areas Are Equal: Transfer Learning for Semantic Segmentation via Hierarchical Region Selection(2019)~
+セグメンテーション結果に対してピクセルレベル・領域レベル・画像レベルの重みで学習？
+---CrDoCo: Pixel-level Domain Transfer with Cross-Domain Consistency(2019)~
+SourceとTarget画像を変換するGを用意し敵対的学習、変換前後の画像のセグメンテーション結果の一貫性ロスも用意（面白い）
+---Bidirectional Learning for Domain Adaptation of Semantic Segmentation(2019)~
+画像変換、セグメンテーションをしてTarget側にはマスクした画像をGTとして自己教師あり学習
+---Learning Semantic Segmentation from Synthetic Data: A Geometrically Guided Input-Output Adaptation Approach(2019)~
+Sourceの深度情報を用いている
+---All about Structure: Adapting Structural Information across Domains for Boosting Semantic Segmentation(2019)~
+SourceとTarget入力に特異な特徴と共通の特徴を抽出して画像再構成できるように学習（面白い）
+---DLOW: Domain Flow for Adaptation and Generalization(2019)~
+Source画像をTarget画像に変換していく。その中間表現画像で識別器に条件付けする
+---Taking A Closer Look at Domain Shift: Category-level Adversaries for Semantics Consistent Domain Adaptation(2019)~
+２つの分類器を用意して重みの不一致ロスを計算、敵対的に学習
+---ADVENT: Adversarial Entropy Minimization for Domain Adaptation in Semantic Segmentation(2019)~
+各クラスに対して自己情報量によるエントロピーを最小化
+---SPIGAN: Privileged Adversarial Learning from Simulation(2019)~
+Simulationでの深度データも利用する
+---Penalizing Top Performers: Conservative Loss for Semantic Segmentation Adaptation(2018)~
+SourceとTargetでEncoder共有、Gは重み共有でそれぞれ敵対的学習、Conservative Loss
+---Domain transfer through deep activation matching(2018)~
+SourceとTargetを近づけるために識別器にそれぞれの各層での特徴量を入力する
+---Unsupervised Domain Adaptation for Semantic Segmentation via Class-Balanced Self-Training(2018)~
+Targetに疑似ラベルを生成して再訓練する方法
+---DCAN: Dual channel-wise alignment networks for unsupervised scene adaptation(2018)~
+Source画像をTargetっぽい画像にNetで変換してSegmentationNetにつっこむ
+---Fully convolutional adaptation networks for semantic segmentation(2018)~
+教師あり＋敵対的、入力画像をNNで一度変換する
+---Learning to Adapt Structured Output Space for Semantic Segmentation(2018)~
+敵対的な方法、SourceとTargetの識別器を用意するのだが、Encoder層は共有し出力層のみ別々で用意しているようだ
+---Conditional Generative Adversarial Network for Structured Domain Adaptation(2018)~
+Sourceの特徴量をGで変換してTargetに近づけ敵対的学習＋教師あり
+---Learning from Synthetic Data: Addressing Domain Shift for Semantic Segmentation(2018)~
+教師ありロス、再構成ロス、敵対的ロス、補助的なセグメンテーションロスの４つ
+---No More Discrimination: Cross City Adaptation of Road Scene Segmenters(2017)~
+ドメイン識別器とSourceの交差エントロピーがあるのは普通、それに加えてクラス毎のドメイン識別器を用意している（何の意味があるのかよくわからん）
+---Maximum Classi&#64257;er Discrepancy for Unsupervised Domain Adaptation(2018)~
+２つの異なる分類器を用意し、その結果の不一致ロスを計算。不一致が大きくなるように分類器学習（G固定）・不一致が小さくなるようにG学習（分類器固定）、これを敵対的に繰り返す。
+---FCNs in the Wild: Pixel-level Adversarial and Constraint-based Adaptation(2016)~
+敵対的な方法は普通、SourceのGTからクラスサイズの分布を求めてTargetから生成された画像に対してその制約を損失として与えている
+---Learning Semantic Representations for Unsupervised Domain Adaptation(2018)~
+M-ADDAと同じくドメイン間で重心を一致させようとする
+---M-ADDA: Unsupervised Domain Adaptation with Deep Metric Learning(2018)~
+Source教師あり、敵対的識別までは普通だが、Sourceで各クラスの重心を求めてTargetの特徴量がいずれかの重心に近づくように学習するCenter Magnet Lossを導入
+---CYCADA: CYCLE-CONSISTENT ADVERSARIAL DOMAIN ADAPTATION(2018)~
+みんな大好きCycle-consistency lossを使う（嫌や。。。）
+---ADDA: Adversarral Discriminative Domain Adaptation(2017)~
+Sourceで教師ありの後、ドメイン識別を敵対的学習、Targetに対応できる、という流れ
+---Few-Shot Adversarial Domain Adaptation(2017)~
+ドメインとクラスの組み合わせに関して４分類できる識別器とクラスがSameかDifferentか見抜かれないように生成器を学習
+---Deep Reconstruction-Classification Networks for Unsupervised Domain Adaptation(2016)~
+ラベルなしTargetに対して再構成ロスを計算、Sourceは教師あり
+
+--Visual Servoの論文サーベイ
+---論文ではないが視覚サーボのまとめ資料~
+http://ishikawa-vision.org/~koichi/vs1.pdf#search=%27%E8%A6%96%E8%A6%9A%E3%82%B5%E3%83%BC%E3%83%9C%27
+---Visual servo control, Part I: Basic approaches~
+IBVS(画像ベース)とPBVS(位置ベース)の説明
+---Uncalibrated visual servoing of robots using a depth-independent interaction matrix~
+深度情報に依存せずキャリブレーションもしないで固定カメラでロボットアームの動的位置制御をしている（適応制御）
+---Visual servo control of cable-driven soft robotic manipulator~
+カメラがソフトロボットの先端についている
+---Precise motion control of concentric-tube robot based on visual servoing~
+自宅からは読めないが、金属管ロボットの先端にカメラがついているようだ
+---Series pneumatic artificial muscles (sPAMs) and application to a soft continuum robot~
+空気袋を使ったロボットの先端にカメラがついている
+---Visual servoing of soft robot manipulator in constrained environments with an adaptive controller~
+先端にカメラ、環境で制約を受ける中でのPCCに基づく適応制御のようだ
+---Vision-Based Online Learning Kinematic Control for Soft Robots Using Local Gaussian Process Regression~
+先端カメラで位置制御、ガウス過程利用
+---Design and Closed-loop Control of a Tri-layer Polypyrrole based Telescopic Soft Robot~
+外部カメラで曲率制御
+---Underwater Dynamic Visual Servoing for a Soft Robot Arm With Online Distortion Correction~
+ケーブル式ソフトロボットアームの水中動的視覚サーボ（歪み補正考慮）
+---Using vision for pre-and post grasping object localization for soft hands~
+RGB-Dカメラによって把持前後の物体姿勢を得る
+---Learning object grasping for soft robot hands~
+点群データから特長抽出する3DCNNを用い、複数の把持方向から適切な把持姿勢を推定
+---Humanoid robot grasping with a soft gripper through a learned inverse
+model of a central pattern generator and tactile servoing~
+静電容量センサーを張り付けたハンドでの把持、MLPとCPG利用
+---Visual Servoing of Soft Robotic Arms by Binocular~
+空気式の蛇腹で先端にカメラ
+---Design and Fabrication of a New Dual-Arm Soft
+Robotic Manipulator~
+曲げ角度・伸長長さを圧力の2次関数に近似モデリング。外部からの双眼カメラにより対象物の位置を立体視で特定し、空気圧ハンドを動かす。
+---A Real-time 3D Pose Based Visual Servoing Implementation for an Autonomous Mobile Robot Manipulator~
+外部カメラで把持させる。手先と物体に着色、単眼セグメンテーション(HS空間で機械学習分類)からの3Dモデル再構成(ステレオ視差利用)、ポーズ推定FB
+---Fixed-camera visual servo control for planar robots~
+固定外部カメラでロボットアームを平面的に扱うタイプ。画面上位置誤差をトルクとしてFB
+---Optimizing Hand/Eye Configuration for Visual-Servo Systems~
+ロボットのヤコビアンと速度と画像内速度のヤコビアンを用意することで知覚性と操作性を評価し、平面アームに対する外部カメラ位置を最適化
+---Experimental evaluation of fixed-camera direct visual controllers on a direct-drive robot~
+自宅では読めない
+---A Two Loops Direct Visual Control of Direct-Drive Planar Robots with Moving Target~
+固定カメラアプローチであり、関節速度と画像ベースの２つのFBループを持つ制御。位置制御で実験
+---Dynamical Image-based PID Uncalibrated Visual Servoing with Fixed Camera for Tracking of Planar Robots with a Heuristical Predictor~
+固定カメラアプローチ、動的画像サーボPID位置制御
+---Visual Servoing for Constrained Planar Robots Subject to Complex Friction~
+固定カメラアプローチ、Visual ServoのみならずVisual Force ServoやVisual Friction Compensationについて書いてある。視覚ベースの摩擦補償、接触力も制御できる様子
+---Robust asymptotically stable visual servoing of planar robots~
+固定カメラアプローチ、動的な位置制御
+---Adaptive control of nonlinear visual servoing systems for 3D cartesian tracking ~
+固定カメラアプローチ、ロボットは3次元で動けるので、適応制御で平面トラッキングと深度制御
+---Direct visual servoing of planar manipulators using moments of planar targets ~
+固定カメラアプローチ、アームにトルクの形で画像FBする
+---Computing Pressure-Deformation Maps for Braided Continuum Robots~
+空圧連続体ロボットの圧力変形マップを計算。ニューロン学習させるための圧力変形データを外部カメラで計測している
+---Autonomous Object Manipulation Using a Soft Planar Grasping Manipulator~
+固定カメラでマーカ付き物体位置と半径をモーションキャプチャして、平面マニピュレータを制御
+---Visual Servo Control of Robot Grasping~
+書籍の中の一章
+---Domain Randomization for Transferring Deep Neural Networks from Simulation to the Real World~
+深層把持
+---Sim2Real Viewpoint Invariant Visual Servoing by Recurrent Control~
+深層把持、LSTMと強化学習
+---Using Simulation and Domain Adaptation to Improve Efficiency of Deep Robotic Grasping~
+深層把持、DANN利用、通称GraspGAN
+---RCAN: Sim-to-Real via Sim-to-Sim: Data-efficient Robotic Grasping via Randomized-to-Canonical Adaptation Networks~
+深層把持、pix2pix利用、強化学習
+---Learning Synergies between Pushing and Grasping with Self-supervised Deep Reinforcement Learning~
+深層把持、強化学習
+---On-Policy Dataset Synthesis for Learning Robot Grasping Policies Using Fully Convolutional Deep Networks~
+深層把持、強化学習、深度画像
+---Learning ambidextrous robot grasping policies~
+深層把持、強化学習、深度画像
+---Dex-Net 2.0: Deep Learning to Plan Robust Grasps with Synthetic Point Clouds and Analytic Grasp Metrics~
+深層把持、強化学習、深度画像
+---Cartman: The low-cost Cartesian Manipulator that won the Amazon Robotics Challenge~
+深層把持、セグメンテーションしてから把持点を計算（表面法線、Centroid）
+
+*Analysis of Soft Robotics Based on the Concept of Category of Mobility [#y713337b]
+-圏論によるソフトロボットの理論づけ
+-微粒子の詰まった袋によるユニバーサルグリッパを想定
+-ハードロボットとソフトロボットの数学的基本構造の違いとして、ハードロボットは「同型」、ソフトロボットは自然変換を介した「圏同値」で特徴付けられるとした
+-参考：http://www.inter.ipc.i.u-tokyo.ac.jp/pdf/CategoryTheoryInsipiredApplicationsArchive.pdf
+
+*Complementary Surrounds Explain Diverse Contextual Phenomena Across Visual Modalities [#w1c1a683]
+-人間のように錯視を認識するニューラルネット
+
+*Illusory motion reproduced by deep neural networks trained for prediction [#s46d6b59]
+-深層学習で画像内の回転運動を予測、蛇の回転錯視も認識
+
+*The Origins and Prevalence of Texture Bias in Convolutional Neural Networks [#ua486a38]
+-解説記事：https://ai-scholar.tech/articles/image-recognition/texture
+-CNNはシェイプ情報が嫌いでテクスチャ情報好きなのかのバイアスについて調査
+-位置情報とかが重要なClassificationだと影響受けそうだけど、エッジフィルタが必要なSegmentationだとCNNの方が良さそうという所感
+
+*Modeling of soft fiber-reinforced bending actuators [#vdf2df10]
+-ハーバードの繊維強化型ソフトフィンガ製造法
+
+*Automatic design of fiber-reinforced soft actuators for trajectory matching [#debeef0c]
+-繊維強化型
+
+*A novel type of compliant and underactuated robotic hand for dexterous grasping [#sd39c84b]
+-ハンド型の繊維強化
+
+*Optimal, model-based design of soft robotic manipulators [#x20a469a]
+-繊維で網のように完全に覆う繊維強化タイプ
+
+*Integrated flexible microactuator systems [#ic80709b]
+-鈴森先生のFMA（繊維強化）
+
+*Rate-Distortion Optimization Guided Autoencoder for Isometric Embedding in Euclidean Latent Space [#z22ae7bf]
+-富士通研の次元の呪い解決！？のやつ
+-オートエンコーダで次元削減後の分布が入力データ分布と同じようになるよう損失関数に削減後の情報量を足している
+
+*BayesSim: adaptive domain randomization via probabilistic inference for robotics simulators [#h68c85e8]
+-シミュレーションでの観測データからシミュレータパラメータの確率的な推論を行う
+-シミュレータパラメータと出力状態結果のペアから求めた混合ガウス分布による分布近似（NNではなく準モンテカルロランダムフーリエ特徴を利用したらしい）
+-事後分布のDomain Randomizationへの利用（事前分布でやるより良い）
+-コードが公開されている
+-シミュレータをブラックボックスとして扱う（内部の微分方程式計算は考慮しない）ため、尤度なし推論となり、サンプリングベースの近似ベイズ計算（ABC）を使う
+-強化学習のタスクへの適用で実験している（摩擦係数の事前分布を正規分布で用意して、事後分布を求めるなど）
+-まとめると、Domain RandomizationするならBayesSimで計算した分布からサンプルするのが良いよ、ということ（話題はシミュレーション内で完結している）
+
+*Vision-Based Online Learning Kinematic Control for Soft Robots Using Local Gaussian Process Regression [#gbcb23a6]
+-局所ガウス過程回帰を用いた画像ベースのオンライン学習制御
+-カメラはソフトロボットの先端についている
+-テンプレートマッチングによりロボットの運動を推定し、ガウス過程のパラメータ更新・特徴点位置更新、これにより目標位置・軌道に従う
+-事前に環境からデータを取得し、事前学習しておく
+-水風船を先端に付けて6~21gの荷重実験もしたりしている
+-Introductionがサーベイの参考になる
+
+*Underwater Dynamic Visual Servoing for a Soft Robot Arm With Online Distortion Correction [#l7476cac]
+-ケーブル式ソフトロボットアームの水中動的視覚サーボ（歪み補正考慮）
+-適応制御によってカメラキャリブレーションと歪み係数のパラメータ推定もオンラインで行う
+-動力学モデルを作っている
+-先端に赤いマークをつけて軌道追従制御をさせている
+-実験から位置誤差と速度誤差で評価している
+
+*Design and Closed-loop Control of a Tri-layer Polypyrrole based Telescopic Soft Robot [#zb004a6e]
+-電気で伸縮するポリマーによるソフトロボットを画像フィードバック位置制御
+-ソフトロボットの端点をつないだ直線から曲率を定義し、角度変化を計算、画像処理で求めた角度と比較して駆動する（曲率制御）
+-先端位置のフィードバックも加えて経路計画や障害物回避もやっている
+
+*Flow-based Deep Generative Models [#l92d384c]
+-https://lilianweng.github.io/lil-log/2018/10/13/flow-based-deep-generative-models.html
+-VAE,GANに続く深層生成手法Flowのまとめ
+-逆変換可能で確率密度関数や尤度を求められる
+-変換を繰り返して複雑な分布を生成（正規化フロー）
+-対数尤度最大化で学習
+-生成モデル、自己回帰に利用、変分推論に利用、の3種類が主流
+-参考：https://www.slideshare.net/DeepLearningJP2016/dlflowbased-deep-generative-models
+-参考コード：https://qiita.com/opeco17/items/62192b4dd1cd9cbaa170
+
+*Glow: Generative Flow with Invertible 1×1 Convolutions [#k9f1e0fa]
+-RealNVPの改良版
+-Activation Normalization、Invertible 1x1 Conv、Affine couplingの3処理構造で分布を可逆変換していく
+-参考コード
+--https://blog.evjang.com/2018/01/nf1.html
+--https://github.com/musyoku/chainer-glow
+--https://github.com/rosinality/glow-pytorch
+
+*A Soft Robotic Gripper With Gecko-Inspired Adhesive [#tba212fb]
+-3本指で40kPaで111Nの力を出し11.3kgのダンベルを持ち上げたソフトグリッパ
+-指の幅は2cm、長さは6cm、厚さは1mm程度の薄さ(!?)
+-繊維強化されたシリコンゴム製で蛇腹型、空圧駆動
+-ヤモリに触発された粘着層を加えて粘着力を高めている(ファンデルワールス力)
+-ニュースには45lb(20kg)を持ち上げたと書いてあるが論文には記載なし：http://jacobsschool.ucsd.edu/news/news_releases/release.sfe?id=2522
+-動画：https://www.youtube.com/watch?v=pMvdK4VifDE&feature=emb_title
+
+*RMPflow: A Computational Graph for Automatic Motion Policy Generation [#oe5ffa33]
+-非ユークリッド挙動による方策生成のためのフレームワークRMPfrowの提案
+-幾何学的に一貫してサブタスクたちをグローバルタスクに結合するような計算グラフを構築、なめらかで自然な運動を実現
+
+*A Geometric Algorithm for Robust Multibody Inertial Parameter Identification [#l3c84ecd]
+-物理的に一貫した慣性パラメータの多様体のリーマン幾何学を利用することによって、
+-慣性パラメータ同定における古典的な線形最小二乗問題を非線形に再定式化
+-標準ユークリッド計量の代わりに自然リーマン計量を利用
+
+*有本先生の解説論文 [#m599d119]
+-https://www.jstage.jst.go.jp/article/essfr/2/4/2_4_4_37/_pdf
+-情報幾何についての簡単な説明https://staff.aist.go.jp/s.akaho/papers/infogeo-sice.pdf
+
+*Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks [#i69fca7b]
+-MAMLと呼ばれるメタ学習手法
+-few-shotでいろいろなタスクの学習をする際に学習しやすいように学習する、というアイディア
+
+*One-Shot Visual Imitation Learning via Meta-Learning [#tb037e33]
+-ロボットが画像からタスクを実行する
+-one-shotで様々な環境に模倣学習で対応できるようにメタ学習するというもの
+
+*One-Shot Imitation from Observing Humans via Domain-Adaptive Meta-Learning [#b40a4a44]
+-One-shotで模倣学習を、しかもドメインを変えて行う研究
+-具体的には(ロボットのでなく)人の動作を一回見て模倣する
+-事前学習として人とロボットの動作のペア画像を用意し、戦略の初期値を人の画像から、初期値からの学習をロボットの画像から行う。これで人の画像から良い初期値を得る関数を学習する
+
+*Few-Shot Goal Inference for Visuomotor Learning and Planning [#vad7d560]
+-動作計画or強化学習で物を運び、その様子は画像で得られるロボット
+-少数の成功している画像からタスクの目的を学ぶことができるようにする
+
+*Task-Embedded Control Networks for Few-Shot Imitation Learning [#r76caef0]
+-Task-embedded Netでタスクから情報を抽出、Control Netに毎フレーム入力する
+-同じタスクになら強く、物体の位置などが変わってもいける
+
+*One-Shot Imitation Learning [#tcde8ecc]
+-模倣学習において人の1回のデモで目的のタスクを教示する論文
+-色のついたブロックを指定通りに積み重ねるというタスクにおいて、予め様々な積み重ね方のタスクを学習させ、未知な積み重ね方に対して1度人がデモを行い、現在状態とデモを入力として行動を生成するネットワークを用いて動作生成を行っている。
+
+*Zero-Shot Learning with Semantic Output Codes [#p005b609]
+-画像から線形変換で意味ベクトルにし、そこから最近傍でラベルに分類する
+
+*Devise: A deep visual-semantic embedding model [#qfc4b2eb]
+-画像の分散表現と言語の分散表現からドット積で類似度計算したロスを減らす学習
+
+*Semantic autoencoder for zero-shot learning [#m51a86c6]
+-画像のオートエンコーダーを学習し、その潜在変数がラベルの分散表現になるようにする
+
+*DynaNet: Neural Kalman Dynamical Model for Motion Estimation and Prediction [#j6066fa4]
+-カルマンフィルタのキャリブレーションをNNに担わせる？
+
+*Learning Agile and Dynamic Motor Skills for Legged Robots [#o59c3d32]
+-実測データからActuatorNetと世ぼれるNNを学習し、シミュレーション上での強化学習に組み込むことで脚ロボットを歩かせる
+
+*Sim-to-Real Transfer for Biped Locomotion [#zea293bf]
+-NN-PD Actuatorと呼ばれるものを学習するタイプのsim2real
+-上の論文に関連
+
+*On-Policy Dataset Synthesis for Learning Robot Grasping Policies Using Fully Convolutional Deep Networks [#z84cc9a3]
+-FC-GQ-CNNというネットワークで把持のための方策を学習したよ、という話
+-深度画像が入力、３次元位置と平面方向を複数候補出力するCNNに通して、最大の候補を採用する
+
+*Learning ambidextrous robot grasping policies [#i50e10c7]
+-GQ-CNNによる方策の学習
+-上の論文とほぼ同じだが両手(parallel-jawと吸引式)についてそれぞれネットワークを用意している、報酬は把持の成否
+
+*Dex-Net 2.0: Deep Learning to Plan Robust Grasps with Synthetic Point Clouds and Analytic Grasp Metrics [#mce42a05]
+-上の論文の改良版
+
+*Cartman: The low-cost Cartesian Manipulator that won the Amazon Robotics Challenge [#w8c7c1d4]
+-Amazon Robotics Challengeで買ったピックアンドプレース
+-RGB画像からCNNでセマンティックセグメンテーションして、そのポイントクラウドと把持に最適な表面法線の候補を認識
+
+*Learning Synergies between Pushing and Grasping with Self-supervised Deep Reinforcement Learning [#ob227a7a]
+-積み木を対象にしている。把持できない場合は押すことで部品をバラバラにして分けてから運ぶ
+-RGB-D画像からpushとgraspそれぞれのネットワークでピクセルごとのQ値（状態は画像、行動は 16方向のいずれかに10cm押すこと）予測を計算（DQNぽい）
+
+*Domain Randomization for Transferring Deep Neural Networks from Simulation to the Real World [#bc68a6fd]
+-domain randomization：様々なシミュレーション環境を生成し、ロボットを動かすことで実世界に適用可能にする方法
+
+*RCAN: Sim-to-Real via Sim-to-Sim: Data-efficient Robotic Grasping via Randomized-to-Canonical Adaptation Networks [#g19bdcb4]
+QT-Opt：CNNと強化学習によって、実世界の大量の把持例を学習して把持できるようにする方法(閉ループシステムを学習できる、off-policy)
+-RCAN：domain randomizarionで様々な把持例を用意しておくが、観測した画像は全てpix2pixで標準スタイルに変換され、そのスタイルのシミュレーション環境で把持の学習をする(Q値出力)。これにより現実画像に対しても標準スタイルに変換されることで把持が可能と考えられる
+
+*Using Simulation and Domain Adaptation to Improve Efficiency of Deep Robotic Grasping（GraspGAN） [#hce708af]
+-シミュレーション画像をGANで現実っぽく変換後、その画像と実世界画像でDANN
+-DANNではdomain classifierとGrasp predictorがついていて、誤差逆伝播
+-ピクセルレベルのDAを用いる cf. PixelDA、SimGAN
+
+*TossingBot: Learning to Throw Arbitrary Objects with Residual Physics [#z82638be]
+-残差物理学の利用
+--事前方策＋パラメトリック関数を方策とする（この関数を学習）
+--論文中では、リリースする座標におけるエンドエフェクタの速度v＝投げ入れる目標位置からの物理計算によるリリース速度v^＋方策NNによる差分δ、とした
+-学習モデル
+--認識のネットワーク：RGB-D画像→FCN ResNet→特徴表現μ
+--把持のネットワーク：μ＋v^→把持確率のmap（画像を回転させて１６パターンのうち最も把持確率が高い点を選択する）→把持位置の３次元座標とエンドエフェクタの角度φg
+--投げるネットワーク：μ＋v^→速度差分δのマップ→リリース位置の３次元座標とエンドエフェクタの３次元速度φt
+--これらの方策は優先度付き経験再生とε-greedyで同時に学習？self-supervisionとも書いてある(自動で生成できる教師信号として、把持後のグリッパ間距離や目標位置に投げ入れられたかどうかを用いる。この信号で学習し、良い特徴表現を獲得する。)
+--誤差関数は把持については交差エントロピー、投げについてはフーバー
+
+*Sim2Real Viewpoint Invariant Visual Servoing by Recurrent Control [#sc9ff81f]
+-カメラ画像からの視覚サーボコントローラを学習、過去の動きを利用（Conv-RNN）
+-クエリ画像（取りたい物体）と各ステップでの全体画像が入力で、ロボットをフレーム内でどう動かすかを決める方策が出力(行動と正解の差を損失関数として学習、すなわちエンドエフェクタの移動方向ベクトル)
+-以前に選択された行動はLSTMに与えられ、後に影響する
+-行動のQ値も出力（モンテカルロリターン推定で学習？）
+-ランダムに生成された大量のシミュレーションデータで学習する。少数の実画像で学習するだけでリアルにも適用できる！（視覚的特徴をアダプト、CNNのfine-tuning）
+
+*Simulation-Based Design of Dynamic Controllers for Humanoid Balancing [#sf8c9524]
+-CMAでシミュレーションのパラメータを調整してヒューマノイドロボットを安定させる
+
+*Development of Human Support Robot as the research platform of a domestic mobile manipulator [#dbda522a]
+-トヨタのHSR論文
+
+*双輪キャスタ型駆動機構を用いたホロノミック全方向移動ロボット [#c42aa90c]
+-HSRにも使われている全方向車輪移動についての論文
+-ヤコビアンの導出が詳しい
+
+*Differentiable MPC for End-to-end Planning and Control [#vea9327e]
+-微分可能モデル予測制御
+
+*Differentiable Optimization-Based Modeling for Machine Learning [#gbfe364b]
+-最適化計算を微分可能にして学習可能に
+
+*Neural slam: Learning to explore with external memory [#tae7d768]
+-状態をLSTMに入力しているが、計画や地図生成のコンポーネントと組み合わせており、その結果をメモリに書き込んでいる？
+
+*CodeSLAM&#8212;learning a compact, optimisable representation for dense visual SLAM [#l7b005f8]
+-密な奥行き画像のコンパクトな特徴量を抽出し、特徴量空間で最適化
+-特徴量抽出はVAE＋U-Net
+-再投影誤差を最小化
+
+*BA-Net: Dense Bundle Adjustment Network [#v7e1237b]
+-バンドル調整をNNにする
+
+*UnsuperPoint: End-to-end Unsupervised Interest Point Detector and Descriptor [#w34badbc]
+-教師なし深層学習ベースで画像の特徴点検出器と記述子を学習
+
+*PatchMatch: A randomized correspondence algorithm for structural image editing [#o6d24dec]
+-ランダム化アルゴリズムを使用して、画像パッチ間の近似最近傍一致をすばやく見つけるためのインタラクティブな画像編集ツール
+
+*Space-Time Completion of Video [#sa071027]
+-ビデオにおいて人を消すなどを行う
+
+*Multimodal unsupervised image-to-image translation [#ve373d79]
+-見た目を変えずにスタイルを変換する画像のドメイン変換手法
+
+*CariGANs: Unpaired Photo-to-Caricature Translation [#mef96c42]
+-写真を似顔絵風に変換
+
+*Data-efficient hierarchical reinforcement learning [#uf27c57c]
+-階層強化学習について
+
+*Disentangling Disentanglement [#c8e8b5ce]
+-特徴量空間でのもつれをほどく研究
+
+*Slim Slime [#v219d786]
+-東工大の蛇ロボット（シリーズもの）
+-金属ベローズを空圧で駆動する
+
+*A compliant, underactuated hand for robust manipulation [#w07bfb45]
+-関節部に弾性体を用いたロボットハンド（iHYハンド）
+-サーボモータ劣駆動
+-ジョイントに弾性体を利用
+-ハンド全体の重量は1.35kg、包み込み把持の場合は15N、指先把持の場合は12Nまで出力可
+-22kgの重りを持ち上げる
+
+*5自由度油圧駆動Hydraハンドの開発 [#vb4c9723]
+-ハンドとアクチュエータはワイヤとゴムバンドで結ばれている
+-3つの油圧ポンプが1つのベーンモータと2つのシリンダにつながっている
+-ベーンモータは腕の回転のため、シリンダは手首の回転のため
+-指は4本、アクチュエータは5個で一体になっている
+-アクチュエータは油圧シリンダであり、ワイヤを引っ張って指の曲げを実現する
+-300Nのピストン力に相当する約2.4MPaを目標値として圧力制御を行い、80秒以上継続
+
+*Soft robotic glove for combined assistance and at-home rehabilitation [#hf38c62b]
+-hydraulicって書いてあるが、水圧駆動っぽい
+
+*Hydraulic hydrogel actuators and robots optically and sonically camouflaged in water [#h665902d]
+-hydraulicって書いてあるが、水圧駆動っぽい
+-ハイドロゲルで作っている
+-水中で動かしてる
+
+*Hydraulic autonomous soft robotic fish for 3D swimming [#m48b8cbb]
+-Robert K. Katzschmannたち
+-魚型ソフトロボット
+-hydraulicって書いてあるが、水圧駆動っぽい
+-水圧の大出力で水中の抵抗に打ち勝つパワーを出してる
+
+*Cyclic hydraulic actuation for soft robotic devices [#fb5b3c39]
+-Robert K. Katzschmannたち
+-hydraulicって書いてあるが、水圧駆動っぽい
+-魚型のために作ったのかな
+
+*A Recipe for Soft Fluidic Elastomer Robots [#k02ad995]
+-Robert K. Katzschmannたち
+-ソフトロボットの作り方集
+
+*Review of Manufacturing Processes for Soft Biomimetic Robots [#id79c5a6]
+-ソフトロボットの製造方法についてのReview論文
+-SDMとSCM 
+
+*Autonomous undulatory serpentine locomotion utilizing body dynamics of a fluidic soft robot [#ocb90fc2]
+-回路や電力供給源も載せた形の平面移動のヘビ型ロボット（ホイール付き）
+-流体駆動、振幅と周期を変えて実験
+
+*Closed-form inverse kinematics for continuum manipulators [#a33a1ef8]
+-連続体マニピュレータのため逆運動学
+-単一セクションに対する計算を連続するセクションに繰り返し適用していく
+
+*Exploiting short-term memory in soft body dynamics as a computational resource [#a28bdd54]
+-一本のたこ足のようなソフトロボットに2値の時系列モータ入力を行いカオティックに動かす
+-10か所に曲げセンサーを配置して値を取得
+-センサ値からリザバー計算で出力計算
+
+*Kinematics for multisection continuum robots [#n4c38697]
+-連続体ロボットのための運動学的モデリングの手法を提案
+-結果として得られるヤコビアンは比較的単純でリアルタイムに適している
+
+*Practical kinematics for real-time implementation of continuum robots [#qdbe9172]
+-連続体ロボットのリアルタイム実行のためのアルゴリズムを示す
+-tangle/untangle algorithm
+-空気式触手型（象の鼻タイプ）
+
+*Robot collisions: A survey on detection, isolation, and identification [#f323ff5c]
+-ロボット衝突：検出、隔離および識別に関するサーベイ論文
+
+*Position control of an underactuated continuum mechanism using a reduced nonlinear model [#wba07e33]
+-剛体力学と、多変量多項式を含む連続体の非線形カーテンススプリング特性の実験的に得られた近似とからなる縮小非線形モデルを使用した位置制御を提案
+-ワイヤー型のロボット
+-モデルベースのアプローチ
+-部分フィードバック線形化と受動性ベースの制御器を設計
+
+*Computing and controlling compliance of a robotic hand [#i545ea5c]
+-把持のコンプライアンスとスティフネスについて行列の形で計算＆制御している
+
+*Using vision for pre-and post grasping object localization for soft hands [#k8530ba0]
+-RGB-Dカメラによって把持前後の物体姿勢を得る
+-RGBで物体識別、Dで位置推定
+-点群を使ってIterative Closest Pointで位置求める（非Deep）
+-Pre-Grasping Object Localization：DとオブジェクトモデルMから位置、尤度、オブジェクトが何かを求める
+-Post-Grasping Object Localization：RGBで物体を切り出しDで位置推定、画像、D、M、Grasp PoseからObject Poseと尤度を求める
+-ポーズの不確実性をガウスノイズで評価、成功率も評価
+
+*Learning object grasping for soft robot hands [#w8579c8f]
+-従来のモデル駆動把持アプローチでは、不確実性を解決できない
+-点群データから特長抽出する3DCNNを用いる
+-複数の把持方向から適切な把持姿勢（把持方向、手首の向き）を推定
+
+*Simultaneous position and stiffness control for an inflatable soft robot [#q22ad007]
+-キングルーイ
+-剛性と位置の同時制御
+-状態空間方程式から計算してモデル予測制御を使っている
+-カルマンフィルタ利用
+
+*Design, fabrication and control of soft robots [#x33ab101]
+-生物学的にインスパイアされたソフトマテリアルについて参考になる
+-ソフトロボットのReview(2015)
+-"Most fluid-powered soft robots use open-loop valve sequencing to control body segment actuation."
+
+*A novel type of compliant and underactuated robotic hand for dexterous grasping [#vf73b580]
+-器用に握るための空気式ソフトハンドを開発
+-空気で膨らませるときに半径方向に膨張しないようにひもを巻きつけている
+
+*The challenges ahead for bioinspired’soft’robotics [#z30475e3]
+-飯田さんによるの一般的なソフトロボットのまとめ
+
+*Geometrically exact models for soft robotic manipulators [#o86fc06b]
+-せん断やねじれや伸びなどに厳密にやりたい
+-幾何学的に厳密なCosseratロッド理論と、空気筋アクチュエータの繊維強化モデルに基づくモデルを提案
+-重力荷重を無視したPCCモデルを批判
+
+*A neural network controller for continuum robots [#f06d2290]
+-ソフトロボットの不確実性のために、環境への動的適応走査のための高精度制御は難しい
+-動的不確実性を補償するためにFFニューラルネットを利用する（正確な動的モデル不要、9自由度で近似）
+-圧力で操作し、エンコーダからフィードバック
+-長さの目標値を入力、圧力を出力とするNN
+
+*A feed-forward neural network learning the inverse kinetics of a soft cable-driven manipulator moving in three-dimensional space [#n4da60d0]
+-3本ケーブル駆動の一定でない曲率のマニピュレータの逆運動学に対処
+-ヤコビアンによる厳密な幾何学的モデルがわからんので逆運動学をNNで学習する
+-先端位置が入力、マニピュレータを動かすケーブルの力を出力とする
+-マニピュレータの静力学がモデル化する（張力と位置の関係）
+-NNによる予測とIKモデルによる予測の誤差MSEで学習後、NNを利用した位置制御をして位置誤差MSEからまた学習
+-Cosseratアプローチによる直接動力学モデルによってデータセットを作成する
+
+*Internal models for motor control and trajectory planning [#s4903dbb]
+-運動制御と軌道計画のための内部モデルについてのReview
+-アームとハンドを制御
+-アーム予測軌道からグリップの負荷力計算、摩擦係数と安全係数をかけて最小レベル把持力計算、最小レベルよりわずかに大きな力を出す
+-係数同定はどうする？
+
+*Fast, generic, and reliable control and simulation of soft robots using model order reduction [#xb6016f6]
+-シミュレーション計算時間を速くする研究か
+
+*Optimization-based inverse model of soft robots with contact handling [#q79d2e5a]
+-ワイヤー式の象鼻型アーム
+-先端が希望の位置に来るor希望の軌道を描いて移動ができるためにワイヤーにかかる力を計算
+
+*Controllability pre-verification of silicone soft robots based on finite-element method [#u0cff061]
+-リアルタイム有限要素法系
+
+*Real-time control of soft-robots using asynchronous finite element modeling [#o5f03558]
+-リアルタイム有限要素法系
+
+*Control of elastic soft robots based on real-time finite element method [#rf208c9b]
+-下の論文の古いやつ？
+
+*Kinematic modeling and observer based control of soft robot using real-time finite element method [#b5246640]
+-PCCモデルはよく用いられるが、断面が一定でないロボットに使えない
+-そこでCosseratロッド理論に基づく幾何的に厳密なモデルがある
+-これらはモデルベース制御に使われてきたが、比較的複雑な幾何学的形状または体積変形を有するロボットに対しては難しい
+-計算コストが高いが、リアルタイム有限要素法を考える
+-オブザーバベースの制御法を提案
+-位置制御、ロボットにはマーカーがついておりモーションキャプチャできる
+-SOFA使用で、ロボットの微小変位からシミュレーション上のロボットモデルや制御則を更新し、ワイヤーを引っ張る指令を出す
+
+*Design and kinematic modeling of constant curvature continuum robots: A review [#i0c1968c]
+-Review論文
+-PCCモデルについてロボット共通の部分と固有の部分についてまとめる
+-微分運動学についても同様
+-Futureの章では、動的モデルの必要性やVisionによる形状センシングについて述べている
+
+*A framework for the automated design and modelling of soft robotic systems [#c3bf5d56]
+-ソフトロボットの設計やモデリングや制御のための、有限要素解析や連続体モデリングや機械学習に基づくフレームワークの提案
+-アクチュエータ空間（圧力や長さ）からコンフィグレーション空間（弧長や曲率や回転角）への写像はロボット依存で、有限要素解析でやると計算コストが高いので、有限要素解析のシミュレーションは訓練データ作成用に使い、機械学習（ANN）で写像を学習する
+-コンフィグレーション空間からタスク空間への写像はロボット非依存でPCCモデルを利用
+-各タイムステップ毎に圧力→位置を計算し、位置誤差で評価
+-パスから円弧を推論する（始めと終わりの端は直線近似、間は弧で近似しできるだけBackboneに近くなるようにする）
+
+*Design, kinematics, and control of a soft spatial fluidic elastomer manipulator [#wec1581e]
+-前半のReviewが参考になる
+-3次元で自律的な位置決めができる
+-PCCモデルを利用し多セクションマニピュレータ
+-100%ソフトシリコーンゴムで作っている
+-4つの弾性体を1つのセクションに組み合わせてアクチュエータにしている
+-その製造法と、そのための新しい静的モデルの提案
+-軌道制御と位置制御
+-モデルフリーな環境移動の実験
+
+*Visual servoing of soft robot manipulator in constrained environments with an adaptive controller [#aafdaacd]
+-Soft Robotは長さが変わるかも、Targetは位置が変わるかも、外部の影響を受けやすい
+-無限個関節があるようなもの、通常のFK/IKじゃダメ、PCCなど
+-PCCに基づく適応型視覚サーボコントローラ
+-根元固定でSoft Robotの先端にカメラ、画像内の特徴点ベース
+-関節速度を制御、画像ヤコビアンはDepth非依存だが、Depth補償あり
+-適応オブザーバを用いて実験
+-リヤプノフ候補で収束解析している
+-自由空間と制限された空間、平面上（重力考慮）で実験しImage Position Errorで評価
+
+*Control space reduction and real-time accurate modeling of continuum manipulators using ritz and ritz-galerkin methods [#yaeb9574]
+-連続体マニピュレータの制御空間縮小と実時間正確モデリング、というタイトル
+-RitzとRitz-Galerkinのアプローチを使用して、Cosseratロッド静的モデルとLagrange動的モデルの順数値積分を解くために直接単一射撃法を使用
+-連続マニピュレータの無限状態状態空間は、少数の物理点の幾何学的位置を最小化する
+-非線形インピーダンスとConfiguration制御のためのベクトル形式を提案
+
+*Discrete cosserat approach for multi-section soft robots dynamics [#b29d5161]
+-イントロが参考になる
+-continuum Cosserat modelsに対して離散的Cosserat modelsを提案
+-ひずみベクトルを剛体ロボットにおける関節ベクトルのように扱う
+-PCCモデルの拡張でcontinuum Cosserat modelsを離散化する（PCSモデル）
+
+*Model-based feedforward position control of constant curvature continuum robots using feedback linearization [#t14e7ca6]
+-空気圧ベローズの連続体を扱い、各セクションの長さを制御して動かし位置制御する
+-PCC利用、圧力はFB制御、長さは加速度FF、長さと速度FBの二自由度系
+-動力学考慮では、ベローズをバネ付き質量なしモデル化、ODE、トルク考慮
+-セクション当たり１つの質点を有する空間動的モデルに基づくMIMO制御器を開発
+-外乱に強く高速
+
+*Dynamics and trajectory optimization for a soft spatial fluidic elastomer manipulator [#oe380f96]
+-重力下で動的制御
+-エネルギーを微分して運動方程式を求め、最適化式を求める
+-力に対してロボットの合成と物体の合成を考える
+-多体流体駆動ソフトロボットの動的モデルを開発
+-動的モデルと軌道最適化手法によってグラブの動的操作のための局所最適開ループ方策を発見
+-どのような環境ブレースがよいのか提案？
+-反復学習制御が必要
+
+*Kinematics and the implementation of an elephant’s trunk manipulator and other continuum style robots [#wa0a583a]
+-象の鼻型のロボット(ばねを使っているが連続体とみなせる？)
+-曲率の制御を幾何学的に考えている？
+-障害物避けや把持の実験をしている
+
+*Operational space control: A theoretical and empirical comparison [#kfef6df9]
+-Review論文？
+-冗長性の高いロボットの柔軟な（ロバスト？）制御の必要性
+-動作空間制御に着目
+
+*Controlling soft robots: balancing feedback and feedforward elements [#h7f433d6]
+-フィードフォワード動作と低ゲインフィードバックを組み合わせた、人間の運動制御の予測モデルを使用して、人間のような行動を実現できる
+-Memoryブロックを用意して誤差と指令を覚えさせ、次のステップで使用する
+-古典的なFB制御よりも性能がいい
+
+*Globally asymptotically stable ‘pd+’controller for robot manipulators [#k945f33f]
+-オブザーバによる非線形状態推定に基づくPD+補償器のための大域的漸近収束
+-リャプノフ安定とかいろいろやってる
+-ごめんなさいよくわからないです。。あんま自分の研究に関係なさそう
+
+*A unified approach for motion and force control of robot manipulators: The operational space formulation [#n6659d50]
+-オペレーション空間の定式化と運動と力の制御について
+
+*Control of a pneumatically actuated fully inflatable fabric-based humanoid robot [#x17c142e]
+-キングルーイのやつ、関節があるソフトロボット
+-モデル予測制御（MPC）と線形二次制御（LQR）が1自由度の単一関節の位置制御に十分であることを示す
+-インピーダンス制御モデルで運動方程式を記述、圧力と角度の変換式を用意
+-カルマンフィルタ利用、離散状態空間方程式
+-CVXGEN使用
+-まず1自由度のアームで実験した後、多セクションへ拡張
+
+*Design and control of a soft and continuously deformable 2D robotic manipulation system [#i813dabf]
+-高コンプライアンスな平面マルチセグメントマニピュレータ
+-PCCモデルに基づく順運動学と逆運動学を開発
+-空気圧駆動
+-単一セクションの曲率トラッキングとポイント2ポイント移動で実験
+
+*Whole arm planning for a soft and highly compliant 2D robotic manipulator [#id74af1c]
+-平面を走査する空圧駆動ソフトロボットの実験
+-PCCモデルによる動作計画
+
+*Autonomous Object Manipulation Using a Soft Planar Grasping Manipulator [#caa019c2]
+-平面上での移動による物体把持の計画アルゴリズム開発と実験
+-上からカメラで見てモーショントラッキングをする
+-曲率制御を用いている
+
+*Applying a flexible microactuator to robotic mechanisms [#f86d543b]
+-鈴森先生のFMAによるハンド
+-下と同じか
+
+*Flexible Microactuator for Miniature Robots [#ta670b2a]
+-鈴森先生のFMAの論文
+-空圧式の新しいFMAを開発
+-円弧モデルで線形解析している
+
+*Dynamic Control of Soft Robots Interacting with the Environment [#c6e8e314]
+-http://www.centropiaggio.unipi.it/sites/default/files/roso18_0123_fi.pdf
+-動画あり：https://www.youtube.com/watch?v=2tPLJQppJig
+-平面をマニピュレーションできるソフトロボットで実験
+-はじめての連続体ソフトロボットに対する閉ループ動的FB制御を提案
+-環境からエンドエフェクタが受けるインピーダンスをCartesian controllerが制御で表面追従
+-正確な曲率制御のためにPiecewise Constant Curvatureを利用
+-質量位置を考慮し、質量とトルク、剛性を考慮したPCC拡張表現
+-下のD論と関連していて、PCCでソフトロボットと剛体ロボットを同じモデルに関連付けている、というのがメインアイディア
+
+*Building and Controlling Fluidically Actuated Soft [#gc1fac99]
+-http://robert.katzschmann.eu/wp-content/uploads/2018/07/katzschmann2018thesis.pdf
+-MITのD論
+-設計、製造、プランニング、モデリング、制御に分けてそれぞれを扱う
+-ソフトロボットの難点は、動きが回転に制限されずポジションが不確実、市販されていない、外的影響の受けやすさ
+-ケーブル型、電気活性ポリマー型、流体圧力型がある
+-基本ゴムで作るのだが、ワックスで内側のコアを作り、オーブンで溶け出させる手法をとっている
+-指には力センサと曲げセンサをつける
+-以下の3つの制御方法を試している
+--FF制御：グリッパーや魚型ロボットに利用
+--Model-Freeの準静的FB制御：平面上ピッキングや環境走査に利用
+--Model-based動的FB制御：平面多自由度マニピュレーション、物体表面に沿った動きに利用
+---PCC(区分的一定曲率モデル)に合わせて一般的な剛体ロボットのモデルを拡張している？
+
+*A New Soft Robot Control Method Using Model Predictive Control for a Pneumatically Actuated Humanoid [#dcdd0a3e]
+-https://ieeexplore.ieee.org/document/7551190
+-キングルーイ
+-ソフトロボットは作業中の危険を低減できる
+-多自由度空気圧駆動型ヒューマノイドソフトロボット(足はなし)
+-ケーブルなどを使わず、完全に空気圧
+-モデル予測制御(最適制御)を使っている
+-各関節に赤外線マーカをつけ、モーションキャプチャで位置データを得て利用
+-単関節ならIMU、複数ならモーションキャプチャで関節角度計測
+-圧力と力の関係からトルクをモデル化
