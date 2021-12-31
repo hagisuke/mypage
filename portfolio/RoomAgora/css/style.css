@@ -166,12 +166,7 @@ header img{height:60px; margin-left:20px;}
 .button-sec1:hover{
   opacity: .75;
 }
-a.button-sec1,
-a.button-sec1:visited,
-a.button-sec1:hover,
-a.button-sec1:active {
-  color: inherit;
-}
+.button-sec1 h1{color:white;}
 
 #sec2{width:100%; padding:10px 0 50px 0; background:#fdfdfd;}
 
