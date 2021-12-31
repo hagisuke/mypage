@@ -141,7 +141,7 @@ header img{height:60px; margin-left:20px;}
 /* images */
 
 /* Sections */
-#sec1{width:100%; height:400px; min-height:280px; max-height:50%; padding:10px 0; background: #ffbbff; box-sizing:border-box;}
+#sec1{width:100%; height:400px; min-height:280px; max-height:50%; padding:10px 0; background: #bbffbb; box-sizing:border-box;}
 .home-sec1{
     line-height: 400px;
     text-align: center;
