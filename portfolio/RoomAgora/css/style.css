@@ -148,6 +148,23 @@ header img{height:60px; margin-left:20px;}
     font-size: 50px;
     color: #ffffff;
 }
+.button-sec1{
+    width: 148px;
+    height: 48px;
+    border-radius: 24px;
+    background: #bbffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity .3s linear;
+}
+.button-sec1:hover{
+  opacity: .85;
+}
 
 #sec2{width:100%; padding:10px 0 50px 0; background:#fdfdfd;}
 
@@ -160,4 +177,4 @@ header img{height:60px; margin-left:20px;}
 
 #sec5{width:100%; padding:10px 0 50px 0; background:#fdfdfd;}
 
-#footer{width:100%; padding:10px 0 10px 0; text-align: center; background:#000000;}
+#footer{width:100%; padding:10px 0 10px 0; text-align: center; color: #ffffff; background:#000000;}
