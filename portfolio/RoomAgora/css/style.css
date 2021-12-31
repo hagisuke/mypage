@@ -149,6 +149,7 @@ header img{height:60px; margin-left:20px;}
     color: #ffffff;
 }
 .button-sec1{
+    margin: 200px auto;
     width: 148px;
     height: 48px;
     border-radius: 24px;
@@ -163,7 +164,7 @@ header img{height:60px; margin-left:20px;}
     transition: opacity .3s linear;
 }
 .button-sec1:hover{
-  opacity: .85;
+  opacity: .75;
 }
 
 #sec2{width:100%; padding:10px 0 50px 0; background:#fdfdfd;}
