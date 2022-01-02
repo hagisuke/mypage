@@ -97,7 +97,7 @@ header a.menu-inner{padding: 0 10px; margin: auto 0; color: #000000;}
     max-width: 33.3333%;
     margin:10px 0; padding:0 10px;
     box-sizing:border-box;
-    box-shadow: 0 0 5px -5px rgba(0, 0, 0, .5);
+    box-shadow: 0 0 5px -3px rgba(0, 0, 0, .5);
 }
 
 @media (max-width: 767px) {
@@ -138,6 +138,19 @@ header a.menu-inner{padding: 0 10px; margin: auto 0; color: #000000;}
 }
 
 .col2_figure{
+    width: 100%;
+    max-width: 500px;
+}
+
+.col3_normal_figure{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    max-width: 400px;
+}
+
+.col3_figure{
     width: 100%;
     max-width: 500px;
 }
