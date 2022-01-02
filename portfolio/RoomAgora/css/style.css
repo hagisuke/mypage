@@ -143,7 +143,7 @@ header a.menu-inner{color: #000000; padding: 0 10px;}
 /* images */
 
 /* Sections */
-#sec1{width:100%; height:400px; min-height:280px; max-height:50%; padding:10px 0; background: #bbffbb; box-sizing:border-box;}
+#sec1{width:100%; height:400px; min-height:280px; max-height:50%; padding:10px 0; background-image:url("../images/Dummy_green.png"); box-sizing:border-box;}/*background: #bbffbb;*/
 .home-sec1{
     line-height: 400px;
     text-align: center;
