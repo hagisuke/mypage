@@ -97,7 +97,8 @@ header a.menu-inner{padding: 0 10px; margin: auto 0; color: #000000;}
     max-width: 33.3333%;
     margin:10px 0; padding:0 10px;
     box-sizing:border-box;
-    box-shadow: 0 0 5px -3px rgba(0, 0, 0, .5);
+    background: #f8f8f8;
+    /*box-shadow: 0 0 5px -3px rgba(0, 0, 0, .5);*/
 }
 
 @media (max-width: 767px) {
