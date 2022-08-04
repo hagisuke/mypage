@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Sample2</title>
+        <meta name="description" content="Sample2">
+
+        <!-- A-Frameを読み込む -->
+        <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+        <script src="info-message.js"></script>
+    </head>
+    <body>
+        <a-scene cursor="rayOrigin: mouse; fuse: false" info-message>
+            <a-assets>
+                <img id="main-image" src="https://raw.githubusercontent.com/hagisuke/mypage/master/portfolio/RoomAgora/Sample/Assets/NihonBashi.jpg" crossorigin="anonymous"/>
+            </a-assets>
+
+            <a-sky color="#ECECEC"></a-sky>
+
+            <a-entity id="room" position="0 1.5 -3">
+                <a-plane
+                    id="wall_center_plane"
+                    color="#D9D9D9"
+                    height="3"
+                    width="4"
+                    position="0 0 0"
+                    rotation="0 0 0"
+                    opacity="1.0">
+
+                    <!-- object -->
+                    <a-box color="#4CC3D9" depth="0.8" height="0.8" width="0.8" position="-1.6 -1.1 0.4">
+                        <a-sphere color="#EF2D5E" radius="0.2" position="0 0.6 0"></a-sphere>
+                    </a-box>
+                    <a-cylinder color="#FFC65D" radius="0.4" height="1" position="1.6 -1.0 0.4"></a-cylinder>
+                    <a-text
+                        color="#000000" font="dejavu" align="center" value="Welcome!"
+                        width="4" position="0 0.8 0">
+                    </a-text>
+
+                    <!-- main-image -->
+                    <a-plane
+                        id="image_frame"
+                        color="#000000"
+                        height="1.32"
+                        width="2.04"
+                        position="0 0 0.001"
+                        rotation="0 0 0"
+                        opacity="1.0">
+                    </a-plane>
+                    <a-image src="#main-image" height="1.28" width="2" position="0 0 0.005"></a-image>
+
+                    <a-entity
+                        id="detailPanel"
+                        position="1.1 0.46 0.01"
+                        visible="true"
+                        scale="0.1 0.1 0.1"
+                        animation__scale="property: scale; to: 1 1 1; dur: 200; startEvents: mouseenter"
+                        animation__scale_reverse="property: scale; to: 0.1 0.1 0.1; dur: 200; startEvents: mouseleave">
+                        <a-plane
+                            id="panel"
+                            color="#333333"
+                            height="1.8"
+                            width="1.5"
+                            position="0 0 0.001"
+                            rotation="0 0 0"
+                            opacity="1.0">
+                        </a-plane>
+                        <a-image src="#main-image" height="0.96" width="1.5" position="0 0.495 0.002"></a-image>
+                        <a-entity id="detailTitle"
+                             position="-0.68 -0.1 0"
+                             text="shader: msdf; anchor: left; width: 1.5; font: https://cdn.aframe.io/examples/ui/Viga-Regular.json; color: white; value: Nihon Bashi (ca. 1848-49)"></a-entity>
+                        <a-entity id="detailDescription"
+                            position="-0.68 -0.2 0"
+                            text="baseline: top; shader: msdf; anchor: left; font: https://cdn.aframe.io/examples/ui/Viga-Regular.json; color: white; value: This picture was illustrated by Hiroshige Utagawa. Nihonbashi, the Bridge of Japan is one of the Fifty-three Stations of the Tokaido, and the center of the city of Edo. "></a-entity>
+                    </a-entity>
+
+                </a-plane>
+                <a-plane
+                    id="wall_left_plane"
+                    color="#AEAEAE"
+                    height="3"
+                    width="4"
+                    position="-2 0 2"
+                    rotation="0 90 0"
+                    opacity="1.0">
+                </a-plane>
+                <a-plane
+                    id="wall_right_plane"
+                    color="#E0E0E0"
+                    height="3"
+                    width="4"
+                    position="2 0 2"
+                    rotation="0 -90 0"
+                    opacity="1.0">
+                </a-plane>
+                <a-plane
+                    id="ceil_plane"
+                    color="#828282"
+                    height="4"
+                    width="4"
+                    position="0 1.5 2"
+                    rotation="90 0 0"
+                    opacity="1.0">
+                </a-plane>
+                <a-plane
+                    id="floor_plane"
+                    color="#E8E8E8"
+                    height="4"
+                    width="4"
+                    position="0 -1.5 2"
+                    rotation="-90 0 0"
+                    opacity="1.0">
+                </a-plane>
+            </a-entity>
+        </a-scene>
+    </body>
+</html>
