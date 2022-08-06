@@ -104,7 +104,11 @@ header a.menu-inner{padding: 0 10px; margin: auto 0; color: #000000;}
     display: block;
 }
 
-.col3 h2, .col3 p{
+.col3 h2{
+    color: black;
+}
+
+.col3 p{
     color: black;
 }
 
