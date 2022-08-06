@@ -31,7 +31,7 @@ AFRAME.registerComponent('info-message', {
 
   update: function () {
     var messageEl = this.messageEl;
-    messageEl.innerHTML = "<p>This is a simple example of playing audio.</p>";
+    messageEl.innerHTML = "<p>This is a simple example of playing audio. Please note that there is no sound in smartphone browsers due to regulations.</p>";
     messageEl.appendChild(this.closeButtonEl);
   },
 
