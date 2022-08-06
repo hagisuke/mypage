@@ -100,11 +100,8 @@ header a.menu-inner{padding: 0 10px; margin: auto 0; color: #000000;}
     box-shadow: 0 0 5px -3px rgba(0, 0, 0, .5);
 }
 
-.col3 a{
+.col3 h2,p{
     color: black;
-    display: block;
-    width: 100%;
-    height: 100%;
 }
 
 @media (max-width: 767px) {
