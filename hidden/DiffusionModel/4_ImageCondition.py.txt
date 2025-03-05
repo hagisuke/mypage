@@ -18,8 +18,9 @@ def preprocess(image, label):
     # before batch
     image = tf.cast(image[..., tf.newaxis], tf.float32)  # (H, W, C)
     image = tf.clip_by_value(image / 255.0 * 2 - 1, -1.0, 1.0)  # –1 ~ 1
-    label = tf.cast(label, tf.int32)  # ()
-    return image, label
+    label = tf.cast(label, tf.float32)  # ()
+    cimage = tf.fill(tf.shape(image), label)  # (H, W, C)
+    return image, cimage
 
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
 train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train))
@@ -71,11 +72,11 @@ class ConvBlock(tf.keras.Model):
         return output_img
 
 class UNet(tf.keras.Model):
-    def __init__(self, input_ch=1, time_embed_dim=100, num_labels=None):
+    def __init__(self, input_ch=1, time_embed_dim=100, c_ch=0):
         super(UNet, self).__init__()
         self.time_embed_dim = time_embed_dim
 
-        self.down1 = ConvBlock(input_ch, 64, time_embed_dim)
+        self.down1 = ConvBlock(input_ch + c_ch, 64, time_embed_dim)
         self.down2 = ConvBlock(64, 128, time_embed_dim)
         self.bot1 = ConvBlock(128, 256, time_embed_dim)
         self.up2 = ConvBlock(128 + 256, 128, time_embed_dim)
@@ -86,14 +87,11 @@ class UNet(tf.keras.Model):
         self.upsample = tf.keras.layers.UpSampling2D(size=2, interpolation='bilinear')
         self.concat = tf.keras.layers.Concatenate()
 
-        if num_labels is not None:
-            self.label_emb = tf.keras.layers.Embedding(num_labels, time_embed_dim)
-
-    def call(self, input_img, timesteps, labels=None):
+    def call(self, input_img, timesteps, c_img=None):
         time_vec = time_encoding(timesteps, self.time_embed_dim)
 
-        if labels is not None:
-            time_vec += self.label_emb(labels)
+        if c_img is not None:
+            input_img = self.concat([input_img, c_img])
 
         h1 = self.down1(input_img, time_vec)
         h = self.maxpool(h1)
@@ -157,7 +155,7 @@ class Diffuser:
         x_t = tf.math.sqrt(alpha_bar) * x_0 + tf.math.sqrt(1 - alpha_bar) * noise
         return x_t, noise
 
-    def denoise_onestep(self, model, x, t, labels, gamma):
+    def denoise_onestep(self, model, x, t, c):
         t_idx = t - 1  # t = 1 ~ self.num_timesteps -> t_idx = 0 ~ self.num_timesteps-1
         alpha = tf.gather(self.alphas, t_idx)
         alpha_bar = tf.gather(self.alpha_bars, t_idx)
@@ -168,9 +166,7 @@ class Diffuser:
         alpha_bar = tf.reshape(alpha_bar, [x_shape[0]] + [1] * (len(x_shape) - 1))
         alpha_bar_prev = tf.reshape(alpha_bar_prev, [x_shape[0]] + [1] * (len(x_shape) - 1))
 
-        eps = model(x, t, labels, training=False)
-        eps_uncond = model(x, t, training=False)
-        eps = eps_uncond + gamma * (eps - eps_uncond)
+        eps = model(x, t, c, training=False)
 
         noise = tf.random.normal(x_shape)
         noise = noise * tf.cast(t != 1, tf.float32)[:, tf.newaxis, tf.newaxis, tf.newaxis]  # no noise at t=1
@@ -183,20 +179,26 @@ class Diffuser:
         x = tf.cast(tf.clip_by_value((x + 1) / 2 * 255, 0, 255), tf.uint8)
         return x.numpy()
 
-    def sample(self, model, x_shape=(20, 28, 28, 1), labels=None, gamma=3.0):
+    def reverse_to_cimg(self, c):
+        c = tf.cast(tf.clip_by_value(c * 25, 0, 255), tf.uint8)
+        return c.numpy()
+
+    def sample(self, model, x_shape=(20, 28, 28, 1), c=None):
         batch_size = x_shape[0]
         x = tf.random.normal(x_shape)
-        if labels is None:
-            labels = tf.random.uniform([tf.shape(x)[0]], 0, 10, dtype=tf.int32)
+        if c is None:
+            labels = tf.cast(tf.random.uniform([tf.shape(x)[0]], 0, 10, dtype=tf.int32), tf.float32)
+            c = tf.tile(labels[:, tf.newaxis, tf.newaxis, tf.newaxis], [1, tf.shape(x)[1], tf.shape(x)[2], tf.shape(x)[3]])
 
         for i in tqdm(range(self.num_timesteps, 0, -1)):
             t = tf.constant([i] * batch_size, dtype=tf.int32)
-            x = self.denoise_onestep(model, x, t, labels, gamma)
+            x = self.denoise_onestep(model, x, t, c)
 
         images = [self.reverse_to_img(x[i]) for i in range(batch_size)]
-        return images, labels
+        cimages = [self.reverse_to_cimg(c[i]) for i in range(batch_size)]
+        return images, cimages
 
-model = UNet(num_labels=10)
+model = UNet(c_ch=1)
 diffuser = Diffuser(num_timesteps)
 
 ####################################
@@ -226,11 +228,9 @@ def train_step(x, t, y):
 
 epochs = 10
 for epoch in range(epochs):
-    for (images, labels) in tqdm(train_ds):
+    for (images, cimages) in tqdm(train_ds):
         t = tf.random.uniform([tf.shape(images)[0]], 1, num_timesteps + 1, dtype=tf.int32)
-        if tf.random.uniform([], 0, 1) < 0.1:
-            labels = None
-        train_step(images, t, labels)  # (bs, H, W, C), (bs,), (bs,)
+        train_step(images, t, cimages)  # (bs, H, W, C), (bs,), (bs, H, W, C)
 
     print(f'Epoch {epoch + 1} | Loss: {train_loss.result().numpy()}')
     train_loss.reset_state()
@@ -242,20 +242,21 @@ for epoch in range(epochs):
 # STEP4: sampling
 ####################################
 
-def show_images(images, labels=None, rows=2, cols=10):
-    fig = plt.figure(figsize=(cols, rows))
+def show_images(images, cimages=None, rows=2, cols=10):
+    scale = 2 if cimages is not None else 1
+    fig = plt.figure(figsize=(cols, rows * scale))
     i = 0
     for r in range(rows):
         for c in range(cols):
-            ax = fig.add_subplot(rows, cols, i + 1)
+            ax = fig.add_subplot(rows * scale, cols, i + 1)
             plt.imshow(images[i], cmap='gray')
-            if labels is not None:
-                ax.set_xlabel(labels[i].numpy())
-            ax.get_xaxis().set_ticks([])
-            ax.get_yaxis().set_ticks([])
+            plt.axis('off')
+            if cimages is not None:
+                ax = fig.add_subplot(rows * scale, cols, i + 1 + (rows * cols))
+                plt.imshow(cimages[i], cmap='gray', vmin=0, vmax=255)
+                plt.axis('off')
             i += 1
-    plt.tight_layout()
     plt.show()
 
-images, labels = diffuser.sample(model)
-show_images(images, labels)
+images, cimages = diffuser.sample(model)
+show_images(images, cimages)
