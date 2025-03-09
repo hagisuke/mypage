@@ -128,7 +128,7 @@ class RectifiedFlow:
 
         dt = 1. / diffusion_steps
         for i in tqdm(range(diffusion_steps)):
-            t = tf.cast(tf.ones(batch_size) * ((i * dt * (1. - time_eps) + time_eps) * self.num_timesteps + 0.5), tf.int32)  # t = time_eps ~ 1. -> 1 ~ self.num_timesteps
+            t = tf.cast(tf.ones(batch_size) * ((i * dt * (1. - self.time_eps) + self.time_eps) * self.num_timesteps + 0.5), tf.int32)  # t = self.time_eps ~ 1. -> 1 ~ self.num_timesteps
             pred = model(x, t, training=False)
             x = x + pred * dt
 
